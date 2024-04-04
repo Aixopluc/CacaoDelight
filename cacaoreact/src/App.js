@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import './App.css';
 
+
 // Importa los componentes JSX correspondientes
 import Home from './pages/Home';
 import Entrada from './pages/entrada';
@@ -11,6 +12,7 @@ import Modificar from './pages/modificar';
 import GestionarSalida from './pages/gestionarSalida';
 
 function App() {
+  
   return (
     <Router>
       <div className="App">
@@ -25,6 +27,7 @@ function App() {
         </Routes>
       </div>
     </Router>
+
   );
 }
 

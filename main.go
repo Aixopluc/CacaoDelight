@@ -1,19 +1,28 @@
 package main
 
 import (
-	"fmt"
+	"cacaodelight/controllers"
+	"cacaodelight/initializers"
 
-	"gorm.io/driver/mysql"
-	"gorm.io/gorm"
+	"github.com/gin-contrib/cors"
+	"github.com/gin-gonic/gin"
 )
 
-func main() {
-	dsn := "root:root@tcp(127.0.0.1:3306)/cacaodelight?charset=utf8mb4&parseTime=True&loc=Local"
-	DB, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
-	if err != nil {
-		panic("failed to connect to database")
-		fmt.Print(DB)
-	}
+func init() {
+	initializers.LoadEnvvariables()
+	initializers.ConnectToDB()
+}
 
-	fmt.Println("Se ha conectao")
+func main() {
+	r := gin.Default()
+	r.Use(cors.New(cors.Config{
+		AllowOrigins: []string{"http://localhost:3000"},
+		AllowMethods: []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
+		AllowHeaders: []string{"Origin", "Content-Type", "Content-Length", "Accept-Encoding", "Authorization"},
+	}))
+	r.POST("/pales", controllers.PaleCreate)
+	r.GET("/pales", controllers.GetAllPales)
+	r.GET("/pales/:ID", controllers.GetPaleById)
+	r.POST("/pales/:ID", controllers.PaleUpdate)
+	r.Run(":8080") // listen and serve on 0.0.0.0:8080
 }
