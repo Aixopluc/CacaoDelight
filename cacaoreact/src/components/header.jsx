@@ -17,9 +17,9 @@ function Mover() {
     <div className='container mx-auto flex justify-between w-1/4 pt-4  '>
       <div className="w-1/4 h-16">
         <img src={Zoro} alt="Zoro" className="rounded-full" />
-        {/* <Link to="/" className="bg-blue-500 text-white px-4 py-2 rounded-md focus:outline-none hover:bg-blue-600 focus:bg-gray-600">
+        {/* { <Link to="/" className="bg-blue-500 text-white px-4 py-2 rounded-md focus:outline-none hover:bg-blue-600 focus:bg-gray-600">
           Volver a Inicio
-        </Link> */}
+        </Link> } */}
       </div>
       <div className='w-2/4'>
         <h2 className=' text-blue-700 font-bold'>Hola</h2>
