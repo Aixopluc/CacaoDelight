@@ -64,8 +64,8 @@ function Entrada() {
           <label htmlFor="producto" className="block mb-1">Producto:</label>
           <select
             id="producto"
-            name="Peoducto"
-            value={pale.producto}
+            name="Producto" // Aquí se corrigió el nombre del atributo
+            value={pale.Producto} // Aquí se corrigió el nombre del atributo
             onChange={handleInputChange}
             className="w-11/12 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:border-blue-500"
           >
