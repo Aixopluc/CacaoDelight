@@ -25,7 +25,7 @@ function Home() {
                 Mover
               </button>
             </Link>
-            <Link to="/consultar">
+            <Link to="/consulta">
               <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-40 h-24 text-2xl">
                 Consultar
               </button>

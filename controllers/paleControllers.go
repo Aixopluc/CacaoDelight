@@ -3,6 +3,7 @@ package controllers
 import (
 	"cacaodelight/initializers"
 	"cacaodelight/models"
+	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -25,6 +26,18 @@ func PaleCreate(c *gin.Context) {
 
 	// Respuesta exitosa con el registro creado
 	c.JSON(http.StatusCreated, gin.H{"pale": paleData})
+}
+
+func GetPaleByEti(c *gin.Context) {
+	NumeroDePale := c.Param("ETI")
+	var pales models.Pale
+	if err := initializers.DB.Where("numero_de_pale = ?", NumeroDePale).First(&pales).Error; err != nil {
+		log.Println("Error fetching pale:", err)
+	}
+
+	c.JSON(200, gin.H{
+		"pales": pales,
+	})
 }
 
 func GetAllPales(c *gin.Context) {
