@@ -11,6 +11,7 @@ import Consulta from './pages/consulta';
 import Modificar from './pages/modificar';
 import GestionarSalida from './pages/gestionarSalida';
 
+
 function App() {
   
   return (
