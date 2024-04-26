@@ -1,4 +1,5 @@
-
+import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import Header from '../components/header';
 import axios from 'axios';
 
@@ -28,87 +29,6 @@ const ConfirmacionModal = ({ mostrar, cerrarModal, confirmarEliminacion }) => {
 };
 
 function Modificar() {
-  const [numeroPale, setNumeroPale] = useState('');
-  const [mostrarInput, setMostrarInput] = useState(true);
-  const [leido, setLeido] = useState(false);
-  const [pale, setPale] = useState({
-    Producto: '',
-    Kg: '',
-    Lote: '',
-    NumeroDePale: '',
-    Estado: '',
-    Expedido: false,
-    Ubicaccion: ''
-  });
-  const [mostrarModal, setMostrarModal] = useState(false);
-
-  useEffect(() => {
-     console.log("HOla he cambiado",pale)
-  }, [pale]);
-
-  const handleInputChange = (event) => {
-    const { value } = event.target;
-    setNumeroPale(value);
-  };
-
-  const recibirDatosPale = async () => {
-    try {
-      const respuesta = await axios.get(`http://localhost:8080/pale/${numeroPale}`);
-      console.log("Console log de la respuesta",respuesta.data.pale);
-
-      setLeido(true);
-      setPale(respuesta.data.pales);
-    } 
-    catch (error) {
-      console.error('Error al enviar los datos:', error);
-    }
-  };
-
-  const enviarDatosPale = async () => {
-    try {
-      const datosPale = {
-        ...pale,
-        Kg: parseFloat(pale.Kg),
-        NumeroDePale: parseInt(pale.NumeroDePale)
-      };
-      const respuesta = await axios.post(`http://localhost:8080/pales/${pale.ID}`, datosPale ) 
-
-      setLeido(false)
-      setPale({
-        Producto: '',
-        Kg: '',
-        Lote: '',
-        NumeroDePale: '',
-        Estado: '',
-        Expedido: false,
-        Ubicaccion: ''
-      });
-      setNumeroPale('');
-    }
-    catch (error){
-      console.log("ERROR AL ACTUALIZAR LOS DATOS", error);
-    }
-  };
-
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    recibirDatosPale();
-  };
-
-  const abrirModal = () => {
-    setMostrarModal(true);
-  };
-
-  const cerrarModal = () => {
-    setMostrarModal(false);
-  };
-
-  const confirmarEliminacion = () => {
-    // Aquí puedes colocar la lógica para eliminar el pale
-    // Por ahora, simplemente cerramos el modal
-    cerrarModal();
-  };
-
   const [numeroPale, setNumeroPale] = useState('');
   const [mostrarInput, setMostrarInput] = useState(true);
   const [leido, setLeido] = useState(false);

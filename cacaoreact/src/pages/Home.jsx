@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import Header from '../components/header';
-import Footer from '../components/footer';
+import Header from '../components/header'
+
 
 function Home() {
   return (
@@ -42,7 +42,6 @@ function Home() {
             </Link>
           </div>
         </div>
-        <Footer />
       </div>
     </div>
   );

@@ -57,9 +57,9 @@ function Consulta() {
   };
 
   return (
-    <div className='bg-cdverde  min-h-screen' className='w-[90%] m-auto '>
+    <div className='w-[90%] m-auto '>
       <Header back={true} />
-      <div className='flex justify-center '>
+      <div className='flex justify-center'>
         <div className="ag-theme-quartz w-[100%]" style={{ height: '100vh' }}>
           <AgGridReact
             rowData={data.pales}
