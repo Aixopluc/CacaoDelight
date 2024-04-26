@@ -5,3 +5,39 @@
 @tailwind utilities;
 
 
+.ag-paging-panel{
+    background-color: #e6d5b9 !important;
+    color:#ebe77a
+}
+
+.ag-header{
+    background-color: #e6d5b9 !important; 
+}
+/* 
+.ag-row-selected{
+    background-color: #e8e6a0!important;
+} */
+
+/* .ag-row-hover{
+    background-color: #e5e179!important;
+} */
+
+.ag-checkbox-input{
+    background-color: red!important;
+}
+*{
+    font-family: 'Roboto';
+}
+
+body{
+    background-color: #705540;
+}
+
+.ag-theme-quartz {
+    /* --ag-active-color: white!important; */
+     /* --ag-row-hover-color: #edebb600 !important; */
+    /* --ag-row-hover-color: color-mix(in srgb, transparent,#edebb6 50%) !important; */
+    --ag-selected-row-background-color: #e9e68e !important;
+    --ag-checkbox-checked-color: #1E331D !important;
+    --ag-active-color: #705540 !important
+}

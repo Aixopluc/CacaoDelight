@@ -61,13 +61,13 @@ function Entrada() {
         <Header back={true} />
         <p className="text-2xl font-bold mb-4 text-cream">ENTRADA DE PRODUCTO</p>
         <div className="mb-4">
-          <label htmlFor="producto" className="block mb-1 text-cream font-bold">Producto:</label>
+          <label htmlFor="producto" className="block mb-1">Producto:</label>
           <select
             id="producto"
             name="Producto"
             value={pale.Producto}
             onChange={handleInputChange}
-            className="w-11/12 px-3 py-2 border-2 border-cream rounded-md shadow-sm focus:outline-none bg-grisin text-cdverde"
+            className="w-11/12 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:border-blue-500"
           >
             <option value="0">Seleccionar producto</option>
             <option value="Producto 1">Producto 1</option>
@@ -77,42 +77,42 @@ function Entrada() {
         </div>
 
         <div className="mb-4">
-          <label htmlFor="kg" className="block mb-1 text-cream font-bold">Kilogramos (kg):</label>
+          <label htmlFor="kg" className="block mb-1">Kilogramos (kg):</label>
           <input
             type="text"
             id="kg"
             name="Kg"
             value={pale.Kg}
             onChange={handleInputChange}
-            className="w-11/12 px-3 py-2 border-2 border-cream rounded-md shadow-sm focus:outline-none bg-grisin text-cdverde"
+            className="px-3 w-11/12 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:border-blue-500"
           />
         </div>
         <div className="mb-4">
-          <label htmlFor="lote" className="block mb-1 text-cream font-bold">Lote:</label>
+          <label htmlFor="lote" className="block mb-1">Lote:</label>
           <input
             type="text"
             id="lote"
             name="Lote"
             value={pale.Lote}
             onChange={handleInputChange}
-            className="w-11/12 px-3 py-2 border-2 border-cream rounded-md shadow-sm focus:outline-none bg-grisin text-cdverde"
+            className="w-11/12 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:border-blue-500"
           />
         </div>
         <div className="mb-4">
-          <label htmlFor="numeroEtiqueta" className="block mb-1 text-cream font-bold">Número de etiqueta:</label>
+          <label htmlFor="numeroEtiqueta" className="block mb-1">Número de etiqueta:</label>
           <input
             type="text"
             name="NumeroDePale"
             id="numeroEtiqueta"
             value={pale.NumeroDePale}
             onChange={handleInputChange}
-            className="w-11/12 px-3 py-2 border-2 border-cream rounded-md shadow-sm focus:outline-none bg-grisin text-cdverde"
+            className="w-11/12 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:border-blue-500"
           />
         </div>
         <div className=" justify-between items-center">
           <button
             onClick={enviarDatosPale}
-            className=" text-cdverde px-4 py-2 rounded-md focus:outline-none bg-cream"
+            className=" bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 focus:outline-none focus:bg-blue-600"
           >
             Añadir
           </button>

@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import React, { useState, useEffect } from 'react';
 import Zoro from '../img/zoro.jpg';
+import Kiko from '../img/kiko.png'
 import { ArrowLeftIcon, BeakerIcon } from '@heroicons/react/24/solid'
 
 function Header(props) {
@@ -16,16 +17,16 @@ function Header(props) {
 
   return (
     <div>
-      <div className='flex justify-between pt-4 mx-3 items-center'>
+      <div className='flex justify-between pt-4 px-3 items-center '>
         <div className="flex justify-center items-center">
-          <img src={Zoro} alt="Zoro" className="rounded-full" width={70} />
+          <img src={Kiko} alt="Zoro" className="rounded-full" width={70} />
           <div className='flex flex-col justify-center text-left ml-4'>
             <h2 className='text-white font-bold'>Hola</h2>
             <h3 className='text-white'>Marina</h3>
           </div>
         </div>
 
-        <div className='text-white text-lg rounded-full h-12 ml-auto'>{hora}</div>
+        <div className='text-white text-3xl ml-auto font-bold items-center mr-4'>{hora}</div>
       </div>
 
       {props.back && (
