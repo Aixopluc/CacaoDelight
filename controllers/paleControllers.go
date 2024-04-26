@@ -3,6 +3,7 @@ package controllers
 import (
 	"cacaodelight/initializers"
 	"cacaodelight/models"
+	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -29,7 +30,7 @@ func PaleCreate(c *gin.Context) {
 
 func GetAllPales(c *gin.Context) {
 	var pales []models.Pale
-	initializers.DB.Find(&pales)
+	initializers.DB.Find(&pales, "expedido = false")
 
 	c.JSON(200, gin.H{
 		"pales": pales,
@@ -49,26 +50,32 @@ func GetPaleById(c *gin.Context) {
 
 }
 
+func GetPaleByEti(c *gin.Context) {
+	NumeroDePale := c.Param("ETI")
+	var pales models.Pale
+	if err := initializers.DB.Where("numero_de_pale = ?", NumeroDePale).First(&pales).Error; err != nil {
+		log.Println("Error fetching pale:", err)
+	}
+
+	c.JSON(200, gin.H{
+		"pales": pales,
+	})
+}
+
 func PaleUpdate(c *gin.Context) {
-	// Paso 1: Parsear el ID del parámetro de la URL
 	id := c.Param("ID")
 
-	// Paso 2: Vincular los datos del JSON de la solicitud a una estructura en Go
 	var paleUpdateData models.Pale
 	if err := c.BindJSON(&paleUpdateData); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-
-	// Paso 3: Recuperar el registro de la base de datos que deseas actualizar utilizando GORM
 	var pale models.Pale
 	if err := initializers.DB.First(&pale, id).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Registro no encontrado"})
 		return
 	}
 
-	// Paso 4: Actualizar los campos del registro con los datos proporcionados en la solicitud
-	// Actualiza solo los campos que están presentes en la solicitud
 	if paleUpdateData.NumeroDePale != 0 {
 		pale.NumeroDePale = paleUpdateData.NumeroDePale
 	}
@@ -98,4 +105,39 @@ func PaleUpdate(c *gin.Context) {
 
 	// Respuesta exitosa
 	c.JSON(http.StatusOK, pale)
+}
+
+func PaleToExp(c *gin.Context) {
+	var numsPales []int
+	var pales []models.Pale
+
+	if err := c.BindJSON(&numsPales); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	for _, numPale := range numsPales {
+		var pale models.Pale
+		if err := initializers.DB.Find(&pale, "numero_de_pale = ?", numPale).Error; err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "No se encontró un pale con el número " + string(numPale)})
+			return
+		}
+		pale.Estado = "Expedir"
+		pales = append(pales, pale)
+		if err := initializers.DB.Save(&pale).Error; err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "No se pudo guardar el pale modificado en la base de datos"})
+			return
+		}
+	}
+
+	c.JSON(http.StatusCreated, gin.H{"pale": pales})
+}
+
+func GetAllPalesExp(c *gin.Context) {
+	var pales []models.Pale
+	initializers.DB.Find(&pales, "expedido = true")
+
+	c.JSON(200, gin.H{
+		"pales": pales,
+	})
 }
