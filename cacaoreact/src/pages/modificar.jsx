@@ -1,33 +1,4 @@
-import React, { useState, useEffect } from 'react';
-import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import Header from '../components/header';
-import axios from 'axios';
 
-const ConfirmacionModal = ({ mostrar, cerrarModal, confirmarEliminacion }) => {
-  return (
-    <div className={`fixed inset-0 flex items-center justify-center ${mostrar ? '' : 'hidden'}`}>
-      <div className="absolute bg-gray-900 opacity-50 inset-0"></div>
-      <div className="bg-white p-8 rounded-lg z-10">
-        <p className="mb-4">¿Estás seguro de eliminar este pale?</p>
-        <div className="flex justify-center">
-          <button
-            onClick={cerrarModal}
-            className="mr-4 bg-gray-300 hover:bg-gray-400 px-4 py-2 rounded-md"
-          >
-            Cancelar
-          </button>
-          <button
-            onClick={confirmarEliminacion}
-            className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md "
-          >
-            Eliminar
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-};
 import Header from '../components/header';
 import axios from 'axios';
 
