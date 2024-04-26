@@ -25,5 +25,7 @@ func main() {
 	r.GET("/pales/:ID", controllers.GetPaleById)
 	r.GET("/pale/:ETI", controllers.GetPaleByEti)
 	r.POST("/pales/:ID", controllers.PaleUpdate)
+	r.POST("/pales/exp", controllers.PaleToExp)
+	r.GET("/palesexp", controllers.GetAllPalesExp)
 	r.Run(":8080") // listen and serve on 0.0.0.0:8080
 }
