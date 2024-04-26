@@ -20,6 +20,7 @@ func main() {
 		AllowMethods: []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
 		AllowHeaders: []string{"Origin", "Content-Type", "Content-Length", "Accept-Encoding", "Authorization"},
 	}))
+
 	r.POST("/pales", controllers.PaleCreate)
 	r.GET("/pales", controllers.GetAllPales)
 	r.GET("/pales/:ID", controllers.GetPaleById)

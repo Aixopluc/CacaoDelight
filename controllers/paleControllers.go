@@ -62,18 +62,6 @@ func GetPaleById(c *gin.Context) {
 
 }
 
-func GetPaleByEti(c *gin.Context) {
-	NumeroDePale := c.Param("ETI")
-	var pales models.Pale
-	if err := initializers.DB.Where("numero_de_pale = ?", NumeroDePale).First(&pales).Error; err != nil {
-		log.Println("Error fetching pale:", err)
-	}
-
-	c.JSON(200, gin.H{
-		"pales": pales,
-	})
-}
-
 func PaleUpdate(c *gin.Context) {
 	id := c.Param("ID")
 
