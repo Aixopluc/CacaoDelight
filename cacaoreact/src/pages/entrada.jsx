@@ -12,7 +12,7 @@ function Entrada() {
     Ubicacion: 'Antecamara',
     Estado: 'Por ubicar',
     Expedido: false,
-    Producto: ''
+    Producto: 'Producto 1'
   });
 
   const [modalVisible, setModalVisible] = useState(false);
@@ -24,9 +24,20 @@ function Entrada() {
       ...pale,
       [name]: value
     });
-  }
+  };
+
+  const validarCampos = () => {
+    const { NumeroDePale, Kg, Lote, Producto } = pale;
+    return NumeroDePale && Kg && Lote && Producto;
+  };
 
   const enviarDatosPale = async () => {
+    if (!validarCampos()) {
+      setModalMessage('Rellena todos los campos!');
+      setModalVisible(true);
+      return;
+    }
+
     try {
       const datosPale = {
         ...pale,
@@ -34,30 +45,41 @@ function Entrada() {
         NumeroDePale: parseInt(pale.NumeroDePale)
       };
 
-      const respuesta = await axios.post('http://localhost:8080/pales', datosPale);
-      console.log(respuesta.data);
+      const respuesta = await axios.post('http://localhost:8080/pale/create', datosPale);
+
+      console.log("Respuesta del servidor", respuesta);
       setModalMessage('¡Pale añadido exitosamente!');
       setModalVisible(true);
+
+      // Limpiar el formulario
       setPale({
-        ...pale,
         NumeroDePale: '',
         Kg: '',
         Lote: '',
-        Producto: ''
+        Ubicacion: 'Antecamara',
+        Estado: 'Por ubicar',
+        Expedido: false,
+        Producto: 'Producto 1'
       });
 
-      // Cerrar el modal después de 5 segundos
+      // Cerrar el modal después de 1 segundo
       setTimeout(() => {
         setModalVisible(false);
       }, 1000);
     } catch (error) {
+      if (error.response && error.response.status === 409) {
+        setModalMessage('El número de pale ya existe');
+      } else {
+        setModalMessage(`Error al enviar los datos: ${error.response ? error.response.statusText : error.message}`);
+      }
+      setModalVisible(true);
       console.error('Error al enviar los datos:', error);
     }
-  }
+  };
 
   return (
-    <div className="bg-cdverde  min-h-screen"> 
-      <div className="container mx-auto w-[400px]">
+    <div className="bg-cdverde min-h-screen">
+      <div className="container mx-auto max-w-[400px]">
         <Header back={true} />
         <p className="text-2xl font-bold mb-4 text-cream">ENTRADA DE PRODUCTO</p>
         <div className="mb-4">
@@ -67,9 +89,9 @@ function Entrada() {
             name="Producto"
             value={pale.Producto}
             onChange={handleInputChange}
-            className="w-11/12 px-3 py-3 border border-cream rounded-lg shadow-sm focus:outline-none focus:border-blue-500 bg-grisin"
+            className="w-11/12 px-3 py-2 border-2 border-cream rounded-md shadow-sm focus:outline-none bg-grisin text-cdverde"
+            required
           >
-            <option value="0">Seleccionar producto</option>
             <option value="Producto 1">Producto 1</option>
             <option value="Producto 2">Producto 2</option>
             <option value="Producto 3">Producto 3</option>
@@ -84,7 +106,8 @@ function Entrada() {
             name="Kg"
             value={pale.Kg}
             onChange={handleInputChange}
-            className="px-3 w-11/12 py-3 border border-cream rounded-lg shadow-sm focus:outline-none focus:border-blue-500 bg-grisin"
+            className="w-11/12 px-3 py-2 border-2 border-cream rounded-md shadow-sm focus:outline-none bg-grisin text-cdverde"
+            required
           />
         </div>
         <div className="mb-4">
@@ -95,7 +118,8 @@ function Entrada() {
             name="Lote"
             value={pale.Lote}
             onChange={handleInputChange}
-            className="w-11/12 px-3 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:border-blue-500 bg-grisin"
+            className="w-11/12 px-3 py-2 border-2 border-cream rounded-md shadow-sm focus:outline-none bg-grisin text-cdverde"
+            required
           />
         </div>
         <div className="mb-4">
@@ -106,31 +130,32 @@ function Entrada() {
             id="numeroEtiqueta"
             value={pale.NumeroDePale}
             onChange={handleInputChange}
-            className="w-11/12 px-3 py-3 border border-cream rounded-lg shadow-sm focus:outline-none focus:border-blue-500 bg-grisin"
+            className="w-11/12 px-3 py-2 border-2 border-cream rounded-md shadow-sm focus:outline-none bg-grisin text-cdverde"
+            required
           />
         </div>
-        <div className=" justify-between items-center">
+        <div className="justify-between items-center">
           <button
             onClick={enviarDatosPale}
-            className=" text-cdverde px-4 py-3 rounded-lg mt-10 focus:outline-none bg-cream w-11/12 font-bold hover:bg-hover-but">
+            className="text-cdverde px-4 py-3 rounded-lg mt-10 focus:outline-none bg-cream w-11/12 font-bold hover:bg-hover-but"
+          >
             Añadir
           </button>
         </div>
       </div>
-      {modalVisible && (
-        <div className="fixed inset-0 flex items-center justify-center bg-gray-700 bg-opacity-50">
-          <div className="bg-white p-8 rounded-md shadow-md">
-            <p className="text-lg font-bold mb-4">{modalMessage}</p>
-            <button
-              onClick={() => setModalVisible(false)}
-              className="bg-blue-500 text-green-800 px-4 py-2 rounded-md hover:bg-blue-600 focus:outline-none focus:bg-blue-600"
-            >
-              Cerrar
-            </button>
-          </div>
-          
+
+      {/* MODAL */}
+      <div className={`fixed inset-0 flex items-center justify-center  bg-opacity-50 ${modalVisible ? 'transition-transform duration-300 ease-out transform translate-y-0' : 'transition-transform duration-300 ease-in transform -translate-y-full'}`}>
+              <div className="p-8 bg-cream rounded-md shadow-md  border-hover-but border-2">
+          <p className="text-lg font-bold mb-4">{modalMessage}</p>
+          <button
+            onClick={() => setModalVisible(false)}
+            className="bg-cdverde text-cream px-4 py-2 rounded-md hover:bg-hover-but focus:outline-none">
+            Cerrar
+          </button>
         </div>
-      )}
+      </div>
+
       <Footer />
     </div>
   );

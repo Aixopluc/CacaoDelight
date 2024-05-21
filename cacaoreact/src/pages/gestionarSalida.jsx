@@ -4,6 +4,7 @@ import Header from '../components/header';
 import { AgGridReact } from 'ag-grid-react'; // AG Grid Component
 import "ag-grid-community/styles/ag-grid.css"; // Mandatory CSS required by the grid
 import "ag-grid-community/styles/ag-theme-quartz.css"; // Optional Theme applied to the grid
+import CustomCheckbox from '../components/CustomCheckbox';
 
 function GestionarSalida() {
   const [data, setData] = useState([]); 
@@ -42,7 +43,7 @@ function GestionarSalida() {
 
   const fetchData = async () => {
     try {
-      const response = await axios.get('http://localhost:8080/pales');
+      const response = await axios.get('http://localhost:8080/pales/getAll');
       setData(response.data);
     } catch (error) {
       console.error('Error fetching data:', error);
@@ -69,16 +70,22 @@ function GestionarSalida() {
 
 
   const generarSalida = async () => {
-    try{
+    try {
       const selectedNodes = gridApi.getSelectedNodes();
-      const selectedPales = selectedNodes.map(node => node.data.NumeroDePale); //Aquí puedo elegir si quiero algún dato! De esta manera: "node.data.Producto"
-      setSelectedPales(selectedPales);
-      const respuesta = await axios.post('http://localhost:8080/pales/exp', selectedPales);
-      console.log(respuesta)
-      setSelectedPales([]);
-      gridApi.deselectAll();
-      fetchData()
-    }catch(error){
+      const selectedPales = selectedNodes
+        .filter(node => node.data.Estado !== "Expedir" && node.data.Estado !== "Bloqueado")
+        .map(node => node.data.NumeroDePale);
+  
+      if (selectedPales.length > 0) {
+        const respuesta = await axios.post('http://localhost:8080/pales/exp', selectedPales);
+        console.log(respuesta);
+        setSelectedPales([]);
+        gridApi.deselectAll();
+        fetchData();
+      } else {
+        console.log("No se pueden seleccionar elementos en estado 'Expedir' o 'Bloqueado'.");
+      }
+    } catch (error) {
       console.error('Error al enviar los datos:', error);
     }
   }

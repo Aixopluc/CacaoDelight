@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Header from '../components/header';
 import axios from 'axios';
-
+import Footer from '../components/footer';
 const ConfirmacionModal = ({ mostrar, cerrarModal, confirmarEliminacion }) => {
   return (
     <div className={`fixed inset-0 flex items-center justify-center ${mostrar ? '' : 'hidden'}`}>
@@ -42,6 +42,8 @@ function Modificar() {
     Ubicaccion: ''
   });
   const [mostrarModal, setMostrarModal] = useState(false);
+  const [mostralModalNoPale, setMostrarModalNoPale] = useState(false)
+
 
   useEffect(() => {
      console.log("HOla he cambiado",pale)
@@ -54,13 +56,16 @@ function Modificar() {
 
   const recibirDatosPale = async () => {
     try {
-      const respuesta = await axios.get(`http://localhost:8080/pale/${numeroPale}`);
-      console.log("Console log de la respuesta",respuesta.data.pale);
-
+      const respuesta = await axios.get(`http://localhost:8080/pale/getOneEti/${numeroPale}`);
+      console.log("Console log de la respuesta",respuesta.data.pales);
       setLeido(true);
       setPale(respuesta.data.pales);
+      if(respuesta.data.pales.ID == 0){
+        setMostrarModalNoPale(true)
+      }
     } 
     catch (error) {
+
       console.error('Error al enviar los datos:', error);
     }
   };
@@ -72,7 +77,7 @@ function Modificar() {
         Kg: parseFloat(pale.Kg),
         NumeroDePale: parseInt(pale.NumeroDePale)
       };
-      const respuesta = await axios.post(`http://localhost:8080/pales/${pale.ID}`, datosPale ) 
+      const respuesta = await axios.post(`http://localhost:8080/pale/upd/${pale.ID}`, datosPale ) 
 
       setLeido(false)
       setPale({
@@ -105,14 +110,26 @@ function Modificar() {
   };
 
   const confirmarEliminacion = () => {
-    // Aquí puedes colocar la lógica para eliminar el pale
-    // Por ahora, simplemente cerramos el modal
+    deletePale()
     cerrarModal();
+    setLeido(false)
+    setNumeroPale("")
   };
+
+  const deletePale = async () => {
+    try{
+      const respuesta = await axios.delete(`http://localhost:8080/delete/${pale.ID}`);
+      if (respuesta.status == 200){
+        console.log("Pale eliminado con exito")
+      }
+    }catch(error){
+      console.error("ERROR AL ELIMINAR LOS DATOS", error)
+    }
+  }
 
   return (
     <div className="bg-cdverde min-h-screen">
-      <div className="container mx-auto w-[400px]">
+      <div className="container mx-auto max-w-[400px]">
         <Header back={true} />
         <p className="text-2xl font-bold mb-4 text-cream">MODIFICAR PRODUCTO</p>
 
@@ -125,9 +142,9 @@ function Modificar() {
                 name="Producto"
                 value={pale.Producto}
                 onChange={(event) => setPale({ ...pale, Producto: event.target.value })}
-                className="w-11/12 px-3 py-3 border border-cream rounded-lg shadow-sm focus:outline-none focus:border-blue-500 bg-grisin"
+                className="w-11/12 px-3 py-2 border-2 border-cream rounded-md shadow-sm focus:outline-none bg-grisin text-cdverde"
               >
-                <option value="0">Seleccionar producto</option>
+                {/* <option value="0">Seleccionar producto</option> */}
                 <option value="Producto 1">Producto 1</option>
                 <option value="Producto 2">Producto 2</option>
                 <option value="Producto 3">Producto 3</option>
@@ -142,7 +159,7 @@ function Modificar() {
                 name="Kg"
                 value={pale.Kg}
                 onChange={(event) => setPale({ ...pale, Kg: event.target.value })}
-                className="w-11/12 px-3 py-3 border border-cream rounded-lg shadow-sm focus:outline-none focus:border-blue-500 bg-grisin"
+                className="w-11/12 px-3 py-2 border-2 border-cream rounded-md shadow-sm focus:outline-none bg-grisin text-cdverde"
               />
             </div>
 
@@ -154,7 +171,7 @@ function Modificar() {
                 name="Lote"
                 value={pale.Lote}
                 onChange={(event) => setPale({ ...pale, Lote: event.target.value })}
-                className="w-11/12 px-3 py-3 border border-cream rounded-lg shadow-sm focus:outline-none focus:border-blue-500 bg-grisin"
+                className="w-11/12 px-3 py-2 border-2 border-cream rounded-md shadow-sm focus:outline-none bg-grisin text-cdverde"
               />
             </div>
 
@@ -167,10 +184,11 @@ function Modificar() {
                 id="estado"
                 value={pale.Estado}
                 onChange={(event) => setPale({ ...pale, Estado: event.target.value })}
-                className="w-11/12 px-3 py-3 border border-cream rounded-lg shadow-sm focus:outline-none focus:border-blue-500 bg-grisin"
+                className="w-11/12 px-3 py-2 border-2 border-cream rounded-md shadow-sm focus:outline-none bg-grisin text-cdverde"
               >
                 <option value="0">Seleccionar estado</option>
                 <option value="Por ubicar">Por ubicar</option>
+                <option value="Ubicado">Ubicado</option>
                 <option value="Producción">Producción</option>
                 <option value="Expedir">Expedir</option>
                 <option value="Bloqueado">Bloqueado</option>
@@ -184,7 +202,7 @@ function Modificar() {
                 id="numeroEtiqueta"
                 value={pale.NumeroDePale}
                 onChange={(event) => setPale({ ...pale, NumeroDePale: event.target.value })}
-                className="w-11/12 px-3 py-3 border border-cream rounded-lg shadow-sm focus:outline-none focus:border-blue-500 bg-grisin"
+                className="w-11/12 px-3 py-2 border-2 border-cream rounded-md shadow-sm focus:outline-none bg-grisin text-cdverde"
               />
             </div>
             <div className="flex justify-evenly items-center">
@@ -201,7 +219,9 @@ function Modificar() {
                 Eliminar
               </button>
             </div>
+            <Footer />
           </div>
+          
 
         ) : (
           <div>
@@ -221,11 +241,21 @@ function Modificar() {
                 </div>
               )}
               
-              <button type="submit" className="bg-cream text-cdverde  px-4 py-2 rounded-md">
+              <button type="submit" className="bg-cream text-cdverde  px-4 py-2 rounded-md hover:bg-hover-but">
                 Verificar
               </button>
             </form>
-
+            <Footer />
+            <div className={`fixed inset-0 flex items-center justify-center  bg-opacity-50 ${mostralModalNoPale ? 'transition-transform duration-300 ease-out transform translate-y-0' : 'transition-transform duration-300 ease-in transform -translate-y-full'}`}>
+              <div className="p-8 bg-cream rounded-md shadow-md  border-hover-but border-2">
+                  <p className="text-lg font-bold mb-4">Pale no encontrado</p>
+                  <button
+                    onClick={() => setMostrarModalNoPale(false)}
+                    className="bg-cdverde text-cream px-4 py-2 rounded-md hover:bg-hover-but focus:outline-none">
+                    Cerrar
+                  </button>
+              </div>
+            </div>
           </div>
         )}
         <ConfirmacionModal
@@ -235,6 +265,7 @@ function Modificar() {
         />
       </div>
     </div>
+    
   );
 }
 
