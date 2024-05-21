@@ -20,12 +20,15 @@ func main() {
 		AllowMethods: []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
 		AllowHeaders: []string{"Origin", "Content-Type", "Content-Length", "Accept-Encoding", "Authorization"},
 	}))
-	r.POST("/pales", controllers.PaleCreate)
-	r.GET("/pales", controllers.GetAllPales)
-	r.GET("/pales/:ID", controllers.GetPaleById)
-	r.GET("/pale/:ETI", controllers.GetPaleByEti)
-	r.POST("/pales/:ID", controllers.PaleUpdate)
-	r.POST("/pales/exp", controllers.PaleToExp)
-	r.GET("/palesexp", controllers.GetAllPalesExp)
+	r.POST("/pale/create", controllers.PaleCreate)
+	r.GET("/pales/getAll", controllers.GetAllPales)
+	r.GET("/pale/getOneId/:ID", controllers.GetPaleById)
+	r.GET("/pale/getOneEti/:ETI", controllers.GetPaleByEti)
+	r.POST("/pale/upd/:ID", controllers.PaleUpdate)
+	r.POST("/pales/exp", controllers.PaleToExp)      //Pone el estado del pale a expedir
+	r.GET("/palesexp", controllers.GetAllPalesExp)   //Devuelve todos los pales con estado expedir ordenado por ubicacion
+	r.POST("/paleexp/:numPale", controllers.ExpPale) // Pone el booleano expedidp a true
+	r.DELETE("/delete/:ID", controllers.DeletePaleById)
+	r.POST("/pale/move", controllers.MovePale)
 	r.Run(":8080") // listen and serve on 0.0.0.0:8080
 }
