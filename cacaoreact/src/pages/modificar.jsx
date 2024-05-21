@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Header from '../components/header';
 import axios from 'axios';
-
-const ConfirmacionModal = ({ mostrar, cerrarModal, cerrarModalConfirmacion, mensaje }) => {
+import Footer from '../components/footer';
+const ConfirmacionModal = ({ mostrar, cerrarModal, confirmarEliminacion }) => {
   return (
     <div className={`fixed inset-0 flex items-center justify-center ${mostrar ? '' : 'hidden'}`}>
       <div className="absolute bg-gray-900 opacity-50 inset-0"></div>
@@ -43,9 +43,8 @@ function Modificar() {
     Ubicaccion: ''
   });
   const [mostrarModal, setMostrarModal] = useState(false);
-  const [numeroExiste, setNumeroExiste] = useState(true); // Estado para verificar si el número de pale existe en la base de datos
-  const [mostrarModalConfirmacion, setMostrarModalConfirmacion] = useState(false);
-  const [mensajeConfirmacion, setMensajeConfirmacion] = useState('');
+  const [mostralModalNoPale, setMostrarModalNoPale] = useState(false)
+
 
   useEffect(() => {
     console.log("HOla he cambiado", pale)
@@ -58,14 +57,16 @@ function Modificar() {
 
   const recibirDatosPale = async () => {
     try {
-      const respuesta = await axios.get(`http://localhost:8080/pale/${numeroPale}`);
-      console.log("Console log de la respuesta", respuesta.data.pale);
-
+      const respuesta = await axios.get(`http://localhost:8080/pale/getOneEti/${numeroPale}`);
+      console.log("Console log de la respuesta",respuesta.data.pales);
       setLeido(true);
       setPale(respuesta.data.pales);
-      setNumeroExiste(true); // Establecer como verdadero si el número existe en la base de datos
-    }
+      if(respuesta.data.pales.ID == 0){
+        setMostrarModalNoPale(true)
+      }
+    } 
     catch (error) {
+
       console.error('Error al enviar los datos:', error);
       setPale({
         Producto: '',
@@ -88,7 +89,7 @@ function Modificar() {
         Kg: parseFloat(pale.Kg),
         NumeroDePale: parseInt(pale.NumeroDePale)
       };
-      const respuesta = await axios.post(`http://localhost:8080/pales/${pale.ID}`, datosPale)
+      const respuesta = await axios.post(`http://localhost:8080/pale/upd/${pale.ID}`, datosPale ) 
 
       setLeido(false)
       setPale({
@@ -124,30 +125,27 @@ function Modificar() {
     setMostrarModal(false);
   };
 
-  const cerrarModalConfirmacion = async () => {
-    setMostrarModalConfirmacion(false);
-    await eliminarDatosPale(); // Esperar a que se complete la eliminación antes de continuar
+  const confirmarEliminacion = () => {
+    deletePale()
+    cerrarModal();
+    setLeido(false)
+    setNumeroPale("")
   };
-  
-  const eliminarDatosPale = async () => {
-    try {
-      const respuesta = await axios.delete(`http://localhost:8080/delete/${numeroPale}`);
-      console.log("Console log de la respuesta",respuesta.data.pale);
-  
-      setLeido(true);
-      setPale(respuesta.data.pales);
-  
-      // Mostrar modal de confirmación
-      setMensajeConfirmacion("¡Pale eliminado correctamente!");
-      setMostrarModalConfirmacion(true);
-    } 
-    catch (error) {
-      console.error('Error al enviar los datos:', error);
+
+  const deletePale = async () => {
+    try{
+      const respuesta = await axios.delete(`http://localhost:8080/delete/${pale.ID}`);
+      if (respuesta.status == 200){
+        console.log("Pale eliminado con exito")
+      }
+    }catch(error){
+      console.error("ERROR AL ELIMINAR LOS DATOS", error)
     }
-  };
+  }
+
   return (
     <div className="bg-cdverde min-h-screen">
-      <div className="container mx-auto w-[400px]">
+      <div className="container mx-auto max-w-[400px]">
         <Header back={true} />
         <p className="text-2xl font-bold mb-4 text-cream">MODIFICAR PRODUCTO</p>
 
@@ -160,9 +158,9 @@ function Modificar() {
                 name="Producto"
                 value={pale.Producto}
                 onChange={(event) => setPale({ ...pale, Producto: event.target.value })}
-                className="w-11/12 px-3 py-3 border border-cream rounded-lg shadow-sm focus:outline-none focus:border-blue-500 bg-grisin"
+                className="w-11/12 px-3 py-2 border-2 border-cream rounded-md shadow-sm focus:outline-none bg-grisin text-cdverde"
               >
-                <option value="0">Seleccionar producto</option>
+                {/* <option value="0">Seleccionar producto</option> */}
                 <option value="Producto 1">Producto 1</option>
                 <option value="Producto 2">Producto 2</option>
                 <option value="Producto 3">Producto 3</option>
@@ -177,7 +175,7 @@ function Modificar() {
                 name="Kg"
                 value={pale.Kg}
                 onChange={(event) => setPale({ ...pale, Kg: event.target.value })}
-                className="w-11/12 px-3 py-3 border border-cream rounded-lg shadow-sm focus:outline-none focus:border-blue-500 bg-grisin"
+                className="w-11/12 px-3 py-2 border-2 border-cream rounded-md shadow-sm focus:outline-none bg-grisin text-cdverde"
               />
             </div>
 
@@ -189,7 +187,7 @@ function Modificar() {
                 name="Lote"
                 value={pale.Lote}
                 onChange={(event) => setPale({ ...pale, Lote: event.target.value })}
-                className="w-11/12 px-3 py-3 border border-cream rounded-lg shadow-sm focus:outline-none focus:border-blue-500 bg-grisin"
+                className="w-11/12 px-3 py-2 border-2 border-cream rounded-md shadow-sm focus:outline-none bg-grisin text-cdverde"
               />
             </div>
 
@@ -202,10 +200,11 @@ function Modificar() {
                 id="estado"
                 value={pale.Estado}
                 onChange={(event) => setPale({ ...pale, Estado: event.target.value })}
-                className="w-11/12 px-3 py-3 border border-cream rounded-lg shadow-sm focus:outline-none focus:border-blue-500 bg-grisin"
+                className="w-11/12 px-3 py-2 border-2 border-cream rounded-md shadow-sm focus:outline-none bg-grisin text-cdverde"
               >
                 <option value="0">Seleccionar estado</option>
                 <option value="Por ubicar">Por ubicar</option>
+                <option value="Ubicado">Ubicado</option>
                 <option value="Producción">Producción</option>
                 <option value="Expedir">Expedir</option>
                 <option value="Bloqueado">Bloqueado</option>
@@ -219,7 +218,7 @@ function Modificar() {
                 id="numeroEtiqueta"
                 value={pale.NumeroDePale}
                 onChange={(event) => setPale({ ...pale, NumeroDePale: event.target.value })}
-                className="w-11/12 px-3 py-3 border border-cream rounded-lg shadow-sm focus:outline-none focus:border-blue-500 bg-grisin"
+                className="w-11/12 px-3 py-2 border-2 border-cream rounded-md shadow-sm focus:outline-none bg-grisin text-cdverde"
               />
             </div>
             <div className="flex justify-evenly items-center">
@@ -236,7 +235,9 @@ function Modificar() {
                 Eliminar
               </button>
             </div>
+            <Footer />
           </div>
+          
 
         ) : (
           <div>
@@ -255,8 +256,8 @@ function Modificar() {
                   />
                 </div>
               )}
-
-              <button type="submit" className="bg-cream text-cdverde  px-4 py-2 rounded-md">
+              
+              <button type="submit" className="bg-cream text-cdverde  px-4 py-2 rounded-md hover:bg-hover-but">
                 Verificar
                 {!numeroExiste && (
                   <div className="fixed top-0 right-0 left-0 bottom-0 flex items-center justify-center bg-black bg-opacity-50">
@@ -267,6 +268,17 @@ function Modificar() {
                 )}
               </button>
             </form>
+            <Footer />
+            <div className={`fixed inset-0 flex items-center justify-center  bg-opacity-50 ${mostralModalNoPale ? 'transition-transform duration-300 ease-out transform translate-y-0' : 'transition-transform duration-300 ease-in transform -translate-y-full'}`}>
+              <div className="p-8 bg-cream rounded-md shadow-md  border-hover-but border-2">
+                  <p className="text-lg font-bold mb-4">Pale no encontrado</p>
+                  <button
+                    onClick={() => setMostrarModalNoPale(false)}
+                    className="bg-cdverde text-cream px-4 py-2 rounded-md hover:bg-hover-but focus:outline-none">
+                    Cerrar
+                  </button>
+              </div>
+            </div>
           </div>
         )}
         <ConfirmacionModal
@@ -282,6 +294,7 @@ function Modificar() {
         />
       </div>
     </div>
+    
   );
 }
 
