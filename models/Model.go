@@ -17,6 +17,8 @@ type User struct {
 	ID         uint `gorm:"primaryKey"`
 	Nombre     string
 	Contraseña string
+	Foto       []byte `gorm:"type:longblob"`
 }
+
 
 func (User) TableName() string { return "usuarios" }

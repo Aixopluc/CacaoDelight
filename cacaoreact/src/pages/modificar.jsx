@@ -3,12 +3,12 @@ import { Link } from 'react-router-dom';
 import Header from '../components/header';
 import axios from 'axios';
 
-const ConfirmacionModal = ({ mostrar, cerrarModal, confirmarEliminacion }) => {
+const ConfirmacionModal = ({ mostrar, cerrarModal, cerrarModalConfirmacion, mensaje }) => {
   return (
     <div className={`fixed inset-0 flex items-center justify-center ${mostrar ? '' : 'hidden'}`}>
       <div className="absolute bg-gray-900 opacity-50 inset-0"></div>
       <div className="bg-white p-8 rounded-lg z-10">
-        <p className="mb-4">¿Estás seguro de eliminar este pale?</p>
+        <p className="mb-4">{mensaje}</p>
         <div className="flex justify-center">
           <button
             onClick={cerrarModal}
@@ -17,16 +17,17 @@ const ConfirmacionModal = ({ mostrar, cerrarModal, confirmarEliminacion }) => {
             Cancelar
           </button>
           <button
-            onClick={confirmarEliminacion}
-            className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md "
+            onClick={cerrarModalConfirmacion}
+            className="bg-red-600 hover:bg-red-700 px-4 py-2 rounded-md text-white"
           >
-            Eliminar
+            OK
           </button>
         </div>
       </div>
     </div>
   );
 };
+
 
 function Modificar() {
   const [numeroPale, setNumeroPale] = useState('');
@@ -42,9 +43,12 @@ function Modificar() {
     Ubicaccion: ''
   });
   const [mostrarModal, setMostrarModal] = useState(false);
+  const [numeroExiste, setNumeroExiste] = useState(true); // Estado para verificar si el número de pale existe en la base de datos
+  const [mostrarModalConfirmacion, setMostrarModalConfirmacion] = useState(false);
+  const [mensajeConfirmacion, setMensajeConfirmacion] = useState('');
 
   useEffect(() => {
-     console.log("HOla he cambiado",pale)
+    console.log("HOla he cambiado", pale)
   }, [pale]);
 
   const handleInputChange = (event) => {
@@ -55,13 +59,25 @@ function Modificar() {
   const recibirDatosPale = async () => {
     try {
       const respuesta = await axios.get(`http://localhost:8080/pale/${numeroPale}`);
-      console.log("Console log de la respuesta",respuesta.data.pale);
+      console.log("Console log de la respuesta", respuesta.data.pale);
 
       setLeido(true);
       setPale(respuesta.data.pales);
-    } 
+      setNumeroExiste(true); // Establecer como verdadero si el número existe en la base de datos
+    }
     catch (error) {
       console.error('Error al enviar los datos:', error);
+      setPale({
+        Producto: '',
+        Kg: '',
+        Lote: '',
+        NumeroDePale: 0, // Establecer como 0 si el número no existe en la base de datos
+        Estado: '',
+        Expedido: false,
+        Ubicaccion: ''
+      });
+      setNumeroExiste(false); // Establecer como falso si el número no existe en la base de datos
+      setTimeout(() => setNumeroExiste(true), 2000); // Establecer de nuevo como verdadero después de 2 segundos
     }
   };
 
@@ -72,7 +88,7 @@ function Modificar() {
         Kg: parseFloat(pale.Kg),
         NumeroDePale: parseInt(pale.NumeroDePale)
       };
-      const respuesta = await axios.post(`http://localhost:8080/pales/${pale.ID}`, datosPale ) 
+      const respuesta = await axios.post(`http://localhost:8080/pales/${pale.ID}`, datosPale)
 
       setLeido(false)
       setPale({
@@ -85,8 +101,12 @@ function Modificar() {
         Ubicaccion: ''
       });
       setNumeroPale('');
+
+      // Mostrar modal de confirmación
+      setMensajeConfirmacion("¡Modificado correctamente!");
+      setMostrarModalConfirmacion(true);
     }
-    catch (error){
+    catch (error) {
       console.log("ERROR AL ACTUALIZAR LOS DATOS", error);
     }
   };
@@ -104,12 +124,27 @@ function Modificar() {
     setMostrarModal(false);
   };
 
-  const confirmarEliminacion = () => {
-    // Aquí puedes colocar la lógica para eliminar el pale
-    // Por ahora, simplemente cerramos el modal
-    cerrarModal();
+  const cerrarModalConfirmacion = async () => {
+    setMostrarModalConfirmacion(false);
+    await eliminarDatosPale(); // Esperar a que se complete la eliminación antes de continuar
   };
-
+  
+  const eliminarDatosPale = async () => {
+    try {
+      const respuesta = await axios.delete(`http://localhost:8080/delete/${numeroPale}`);
+      console.log("Console log de la respuesta",respuesta.data.pale);
+  
+      setLeido(true);
+      setPale(respuesta.data.pales);
+  
+      // Mostrar modal de confirmación
+      setMensajeConfirmacion("¡Pale eliminado correctamente!");
+      setMostrarModalConfirmacion(true);
+    } 
+    catch (error) {
+      console.error('Error al enviar los datos:', error);
+    }
+  };
   return (
     <div className="bg-cdverde min-h-screen">
       <div className="container mx-auto w-[400px]">
@@ -175,7 +210,7 @@ function Modificar() {
                 <option value="Expedir">Expedir</option>
                 <option value="Bloqueado">Bloqueado</option>
               </select>
-            </div> 
+            </div>
             <div className="mb-4">
               <label htmlFor="numeroEtiqueta" className="block mb-1 text-cream text-left ml-4">Número de etiqueta:</label>
               <input
@@ -216,22 +251,34 @@ function Modificar() {
                     value={numeroPale}
                     onChange={handleInputChange}
                     className="w-11/12 px-3 py-2 border-2 border-cream rounded-md shadow-sm focus:outline-none bg-grisin text-cdverde"
-          
+
                   />
                 </div>
               )}
-              
+
               <button type="submit" className="bg-cream text-cdverde  px-4 py-2 rounded-md">
                 Verificar
+                {!numeroExiste && (
+                  <div className="fixed top-0 right-0 left-0 bottom-0 flex items-center justify-center bg-black bg-opacity-50">
+                    <div className="bg-white p-8 rounded-lg">
+                      <p className="text-red-500 text-lg">Bruuuuh</p>
+                    </div>
+                  </div>
+                )}
               </button>
             </form>
-
           </div>
         )}
         <ConfirmacionModal
-          mostrar={mostrarModal}
-          cerrarModal={cerrarModal}
-          confirmarEliminacion={confirmarEliminacion}
+        mostrar={mostrarModal}
+        cerrarModal={cerrarModal}
+        cerrarModalConfirmacion={cerrarModalConfirmacion}
+        mensaje="¿Estás seguro de eliminar este pale?"
+      />
+        <ConfirmacionModal
+          mostrar={mostrarModalConfirmacion}
+          cerrarModal={cerrarModalConfirmacion}
+          mensaje={mensajeConfirmacion}
         />
       </div>
     </div>
