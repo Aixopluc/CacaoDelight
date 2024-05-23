@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Header from '../components/header';
 import axios from 'axios';
@@ -6,6 +6,9 @@ import axios from 'axios';
 function Mover() {
   const [numeroPale, setNumeroPale] = useState('');
   const [nuevaUbicacion, setNuevaUbicacion] = useState('');
+  const [showModal, setShowModal] = useState(false);
+  const [modalMessage, setModalMessage] = useState('');
+  const [modalVisible, setModalVisible] = useState(false);
 
   const handleInputChange = (event) => {
     setNumeroPale(event.target.value);
@@ -13,21 +16,18 @@ function Mover() {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    // Llamar a la función para mover el pale
     moverPale();
   };
 
   const moverPale = () => {
-    // Convertir el número de pale a entero antes de enviarlo al servidor
     const eti = parseInt(numeroPale);
     axios.post('http://localhost:8080/pale/move', { eti: eti, ubi: nuevaUbicacion })
       .then(response => {
-        // Manejar la respuesta del backend
-        // Por ejemplo, si la respuesta indica que el número de pale existe, actualiza el estado correspondiente
-        // Por ejemplo, setNumeroExiste(true)
+        setModalMessage('Pale movido correctamente');
+        setShowModal(true);
+        setModalVisible(true);
       })
       .catch(error => {
-        // Manejar cualquier error que pueda ocurrir durante la llamada
         console.error('Error al mover el pale:', error);
       });
   };
@@ -64,10 +64,23 @@ function Mover() {
           <button type="submit" className="bg-cream text-cdverde px-4 py-2 rounded-md">
             Verificar
           </button>
+          
+          {/* MODAL */}
+          
+            <div className={`fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 transition-opacity duration-300 ${modalVisible ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
+              <div className={`p-8 bg-cream rounded-md shadow-md border-hover-but border-2 transform transition-transform duration-300 ${modalVisible ? 'translate-y-0' : '-translate-y-full'}`}>
+                <p className="text-lg font-bold mb-4">{modalMessage}</p>
+                <button
+                  onClick={() => setShowModal(false)}
+                  className="bg-cdverde text-cream px-4 py-2 rounded-md hover:bg-hover-but focus:outline-none focus:bg-blue-600">
+                  Cerrar
+                </button>
+              </div>
+            </div>
         </form>
       </div>
     </div>
   );
 }
-  
+
 export default Mover;

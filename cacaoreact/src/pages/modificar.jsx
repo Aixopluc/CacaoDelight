@@ -8,7 +8,7 @@ const ConfirmacionModal = ({ mostrar, cerrarModal, confirmarEliminacion }) => {
     <div className={`fixed inset-0 flex items-center justify-center ${mostrar ? '' : 'hidden'}`}>
       <div className="absolute bg-gray-900 opacity-50 inset-0"></div>
       <div className="bg-white p-8 rounded-lg z-10">
-        <p className="mb-4">{mensaje}</p>
+        <p className="mb-4">¿Estás seguro de eliminar este pale?</p>
         <div className="flex justify-center">
           <button
             onClick={cerrarModal}
@@ -17,17 +17,16 @@ const ConfirmacionModal = ({ mostrar, cerrarModal, confirmarEliminacion }) => {
             Cancelar
           </button>
           <button
-            onClick={cerrarModalConfirmacion}
-            className="bg-red-600 hover:bg-red-700 px-4 py-2 rounded-md text-white"
+            onClick={confirmarEliminacion}
+            className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md "
           >
-            OK
+            Eliminar
           </button>
         </div>
       </div>
     </div>
   );
 };
-
 
 function Modificar() {
   const [numeroPale, setNumeroPale] = useState('');
@@ -47,7 +46,7 @@ function Modificar() {
 
 
   useEffect(() => {
-    console.log("HOla he cambiado", pale)
+     console.log("HOla he cambiado",pale)
   }, [pale]);
 
   const handleInputChange = (event) => {
@@ -68,17 +67,6 @@ function Modificar() {
     catch (error) {
 
       console.error('Error al enviar los datos:', error);
-      setPale({
-        Producto: '',
-        Kg: '',
-        Lote: '',
-        NumeroDePale: 0, // Establecer como 0 si el número no existe en la base de datos
-        Estado: '',
-        Expedido: false,
-        Ubicaccion: ''
-      });
-      setNumeroExiste(false); // Establecer como falso si el número no existe en la base de datos
-      setTimeout(() => setNumeroExiste(true), 2000); // Establecer de nuevo como verdadero después de 2 segundos
     }
   };
 
@@ -102,12 +90,8 @@ function Modificar() {
         Ubicaccion: ''
       });
       setNumeroPale('');
-
-      // Mostrar modal de confirmación
-      setMensajeConfirmacion("¡Modificado correctamente!");
-      setMostrarModalConfirmacion(true);
     }
-    catch (error) {
+    catch (error){
       console.log("ERROR AL ACTUALIZAR LOS DATOS", error);
     }
   };
@@ -209,7 +193,7 @@ function Modificar() {
                 <option value="Expedir">Expedir</option>
                 <option value="Bloqueado">Bloqueado</option>
               </select>
-            </div>
+            </div> 
             <div className="mb-4">
               <label htmlFor="numeroEtiqueta" className="block mb-1 text-cream text-left ml-4">Número de etiqueta:</label>
               <input
@@ -252,20 +236,13 @@ function Modificar() {
                     value={numeroPale}
                     onChange={handleInputChange}
                     className="w-11/12 px-3 py-2 border-2 border-cream rounded-md shadow-sm focus:outline-none bg-grisin text-cdverde"
-
+          
                   />
                 </div>
               )}
               
               <button type="submit" className="bg-cream text-cdverde  px-4 py-2 rounded-md hover:bg-hover-but">
                 Verificar
-                {!numeroExiste && (
-                  <div className="fixed top-0 right-0 left-0 bottom-0 flex items-center justify-center bg-black bg-opacity-50">
-                    <div className="bg-white p-8 rounded-lg">
-                      <p className="text-red-500 text-lg">Bruuuuh</p>
-                    </div>
-                  </div>
-                )}
               </button>
             </form>
             <Footer />
@@ -282,15 +259,9 @@ function Modificar() {
           </div>
         )}
         <ConfirmacionModal
-        mostrar={mostrarModal}
-        cerrarModal={cerrarModal}
-        cerrarModalConfirmacion={cerrarModalConfirmacion}
-        mensaje="¿Estás seguro de eliminar este pale?"
-      />
-        <ConfirmacionModal
-          mostrar={mostrarModalConfirmacion}
-          cerrarModal={cerrarModalConfirmacion}
-          mensaje={mensajeConfirmacion}
+          mostrar={mostrarModal}
+          cerrarModal={cerrarModal}
+          confirmarEliminacion={confirmarEliminacion}
         />
       </div>
     </div>
