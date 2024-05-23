@@ -1,5 +1,7 @@
 package models
 
+import "github.com/dgrijalva/jwt-go"
+
 type Pale struct {
 	ID           uint `gorm:"primaryKey"`
 	NumeroDePale int
@@ -17,6 +19,24 @@ type User struct {
 	ID         uint `gorm:"primaryKey"`
 	Nombre     string
 	Contraseña string
+	Rol        int
 }
 
 func (User) TableName() string { return "usuarios" }
+
+type RegisterInput struct {
+	Nombre     string `json:"nombre" binding:"required"`
+	Contraseña string `json:"contraseña" binding:"required"`
+	Rol        int    `json:"rol"`
+}
+
+type LoginInput struct {
+	Nombre     string `json:"nombre" binding:"required"`
+	Contraseña string `json:"contraseña" binding:"required"`
+}
+
+type Claims struct {
+	UsuarioID uint `json:"usuario_id"`
+	Rol       int  `json:"rol"`
+	jwt.StandardClaims
+}

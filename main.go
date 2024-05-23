@@ -25,10 +25,12 @@ func main() {
 	r.GET("/pale/getOneId/:ID", controllers.GetPaleById)
 	r.GET("/pale/getOneEti/:ETI", controllers.GetPaleByEti)
 	r.POST("/pale/upd/:ID", controllers.PaleUpdate)
-	r.POST("/pales/exp", controllers.PaleToExp)      //Pone el estado del pale a expedir
-	r.GET("/palesexp", controllers.GetAllPalesExp)   //Devuelve todos los pales con estado expedir ordenado por ubicacion
-	r.POST("/paleexp/:numPale", controllers.ExpPale) // Pone el booleano expedidp a true
+	r.POST("/pales/exp", controllers.PaleToExp)      // Pone el estado del pale a expedir
+	r.GET("/palesexp", controllers.GetAllPalesExp)   // Devuelve todos los pales con estado expedir ordenado por ubicación
+	r.POST("/paleexp/:numPale", controllers.ExpPale) // Pone el booleano expedido a true
 	r.DELETE("/delete/:ID", controllers.DeletePaleById)
 	r.POST("/pale/move", controllers.MovePale)
+	r.POST("/users/create", controllers.CreateUser)
+	r.POST("/users/login", controllers.Login)
 	r.Run(":8080") // listen and serve on 0.0.0.0:8080
 }

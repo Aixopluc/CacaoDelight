@@ -120,7 +120,7 @@ function Consulta() {
     <div className='w-[90%] m-auto '>
       <Header back={true} />
       <div className='flex justify-center'>
-        <div className="ag-theme-quartz w-[100%]" style={{ height: '100vh' }}>
+        <div className="ag-theme-quartz w-[100%]" style={{ height: 'auto' }}>
           <AgGridReact
             rowData={data.pales}
             gridOptions={gridOptions}
