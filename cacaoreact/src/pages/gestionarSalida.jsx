@@ -92,7 +92,7 @@ function GestionarSalida() {
     <div className='w-[90%] m-auto '>
       <Header back={true} />
       <div className=' '>
-        <div className="ag-theme-quartz w-[100%]" style={{ height: '' }}>
+        <div className="ag-theme-quartz w-[100%]" style={{ height: 'auto' }}>
           <AgGridReact
             rowData={data.pales}
             gridOptions={gridOptions}

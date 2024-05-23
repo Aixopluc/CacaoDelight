@@ -10,7 +10,7 @@ import Mover from './pages/mover';
 import Consulta from './pages/consulta';
 import Modificar from './pages/modificar';
 import GestionarSalida from './pages/gestionarSalida';
-import Register from './pages/register';
+import Login from './pages/login';
 
 
 function App() {
@@ -26,7 +26,7 @@ function App() {
           <Route path="/consulta" element={<Consulta />} />
           <Route path="/modificar" element={<Modificar />} />
           <Route path="/gestionarSalida" element={<GestionarSalida />} />
-          <Route path="/register" element={<Register />} />
+          <Route path="/login" element={<Login />} />
         </Routes>
       </div>
     </Router>
