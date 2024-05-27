@@ -11,6 +11,7 @@ import Consulta from './pages/consulta';
 import Modificar from './pages/modificar';
 import GestionarSalida from './pages/gestionarSalida';
 import Login from './pages/login';
+import Register from './pages/register';
 
 
 function App() {
@@ -27,6 +28,7 @@ function App() {
           <Route path="/modificar" element={<Modificar />} />
           <Route path="/gestionarSalida" element={<GestionarSalida />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
         </Routes>
       </div>
     </Router>

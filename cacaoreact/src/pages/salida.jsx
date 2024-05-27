@@ -13,7 +13,12 @@ function Salida() {
 
   const fetchData = async () => {
     try {
-      const response = await axios.get('http://localhost:8080/palesexp');
+      const token = localStorage.getItem('token')
+      const response = await axios.get('http://localhost:8080/palesexp', {
+        headers: {
+          Authorization: token // Establece el token en el encabezado de autorización
+        }
+      });
       const responseData = response.data;
       const palesArray = responseData.pales;
       setData(palesArray);
@@ -45,7 +50,18 @@ function Salida() {
   const handleUserInput = async () => {
     if (userInput == data[currentIndex].NumeroDePale) {
       try {
-        const response = await axios.post(`http://localhost:8080/paleexp/${userInput}`)
+        const token = localStorage.getItem('token')
+        const response = await axios.post(
+          `http://localhost:8080/paleexp/${userInput}`, 
+          // Datos que estás enviando en la solicitud
+          {}, 
+          // Configuración de la solicitud que incluye los headers
+          {
+            headers: {
+              Authorization: token // Establece el token en el encabezado de autorización
+            }
+          }
+        );
         console.log('Respuesta de la llamada POST:', response.data);
         setModalMessage("Pale expedido")
         setShowModal(true)
@@ -112,7 +128,7 @@ function Salida() {
             <p className="text-lg font-bold mb-4">{modalMessage}</p>
             <button
               onClick={() => setShowModal(false)}
-              className="bg-cdverde text-cream px-4 py-2 rounded-md hover:bg-hover-but focus:outline-none focus:bg-blue-600">
+              className="bg-cdverde text-cream px-4 py-2 rounded-md hover:bg-hover-but focus:outline-none ">
               Cerrar
             </button>
           </div>

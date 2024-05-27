@@ -44,8 +44,12 @@ function Entrada() {
         Kg: parseFloat(pale.Kg),
         NumeroDePale: parseInt(pale.NumeroDePale)
       };
-
-      const respuesta = await axios.post('http://localhost:8080/pale/create', datosPale);
+      const token = localStorage.getItem('token');
+      const respuesta = await axios.post('http://localhost:8080/pale/create', datosPale, {
+        headers: {
+          Authorization: token // Establece el token en el encabezado de autorización
+        }
+      });
 
       console.log("Respuesta del servidor", respuesta);
       setModalMessage('¡Pale añadido exitosamente!');

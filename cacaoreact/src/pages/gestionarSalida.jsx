@@ -43,7 +43,12 @@ function GestionarSalida() {
 
   const fetchData = async () => {
     try {
-      const response = await axios.get('http://localhost:8080/pales/getAll');
+      const token = localStorage.getItem('token');
+      const response = await axios.get('http://localhost:8080/pales/getAll', {
+        headers: {
+          Authorization: token
+        }
+      });
       setData(response.data);
     } catch (error) {
       console.error('Error fetching data:', error);
@@ -52,16 +57,16 @@ function GestionarSalida() {
 
   const getRowStyle = (params) => {
     if (params.data && params.data.Estado === "Expedir") {
-      return { background: '#b3ddb7' }; 
-    } else if (params.data && params.data.Estado === "Producción"){
-      return { background: '#a2dcdc' };
-    } else if(params.data && params.data.Estado === "Bloqueado"){
+      return { background: '#D2F0D1' }; 
+    }else if (params.data && params.data.Estado === "Producción"){
+      return { background: '#D1E2F0' };
+    }else if(params.data && params.data.Estado === "Bloqueado"){
       return{background: '#FF8080'}
     }else {
       if (params.node.rowIndex % 2 === 0) {
-        return { background: '#faf8f5' }; // Color de fila para pares
+        return { background: '#F9F9EE' }; // Color de fila para pares
       }
-      return { background: '#f1e6d5' }; // Color de fila para impares
+      return { background: '#F6F5E2' }; // Color de fila para impares
     }
   };
   const onGridReady = (params) => {
@@ -77,7 +82,12 @@ function GestionarSalida() {
         .map(node => node.data.NumeroDePale);
   
       if (selectedPales.length > 0) {
-        const respuesta = await axios.post('http://localhost:8080/pales/exp', selectedPales);
+        const token = localStorage.getItem('token')
+        const respuesta = await axios.post('http://localhost:8080/pales/exp', selectedPales, {
+          headers: {
+            Authorization: token // Establece el token en el encabezado de autorización
+          }
+        });
         console.log(respuesta);
         setSelectedPales([]);
         gridApi.deselectAll();
