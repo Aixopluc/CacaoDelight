@@ -38,7 +38,12 @@ function Consulta() {
   };
   const handleRowButtonClick = async (rowData) => {
     try{
-      const response = await axios.get(`http://localhost:8080/pale/getOneId/${rowData.ID}`);
+      const token = localStorage.getItem('token')
+      const response = await axios.get(`http://localhost:8080/pale/getOneId/${rowData.ID}`, {
+        headers: {
+          Authorization: token // Establece el token en el encabezado de autorización
+        }
+      });
       console.log(response.data.pales)
       setPaleToEdit(response.data.pales)
       setShowModal(true);
@@ -58,7 +63,12 @@ function Consulta() {
 
   const fetchData = async () => {
     try {
-      const response = await axios.get('http://localhost:8080/pales/getAll');
+      const token = localStorage.getItem('token');
+      const response = await axios.get('http://localhost:8080/pales/getAll', {
+        headers: {
+          Authorization: token // Establece el token en el encabezado de autorización
+        }
+      });
       setData(response.data);
     } catch (error) {
       console.error('Error fetching data:', error);
@@ -91,7 +101,13 @@ function Consulta() {
         Kg: parseFloat(paleToEdit.Kg),
         NumeroDePale: parseInt(paleToEdit.NumeroDePale)
       };
-      const respuesta = await axios.post(`http://localhost:8080/pale/upd/${paleToEdit.ID}`, datosPale);
+      const token = localStorage.getItem("token");
+      const respuesta = await axios.post(`http://localhost:8080/pale/upd/${paleToEdit.ID}`, datosPale, {
+        headers: {
+          Authorization: token // Establece el token en el encabezado de autorización
+        }
+      });
+
       if (respuesta.status == 200){
         fetchData()
         setShowModal(false)
@@ -105,7 +121,12 @@ function Consulta() {
 
   const deletePale = async () => {
     try{
-      const respuesta = await axios.delete(`http://localhost:8080/delete/${paleToEdit.ID}`);
+      const token = localStorage.getItem('token')
+      const respuesta = await axios.delete(`http://localhost:8080/delete/${paleToEdit.ID}`, {
+        headers: {
+          Authorization: token // Establece el token en el encabezado de autorización
+        }
+      });
       if (respuesta.status == 200){
         console.log("Pale eliminado con exito")
         fetchData()
@@ -210,7 +231,7 @@ function Consulta() {
               <div className="flex justify-evenly items-center">
               <button
                 onClick={enviarDatosPale}
-                className="bg-cream text-cdverde px-4 py-2 rounded-md hover:bg-hover-but focus:outline-none focus:bg-blue-600">
+                className="bg-cream text-cdverde px-4 py-2 rounded-md hover:bg-hover-but focus:outline-none">
                 Modificar
               </button>
               <button

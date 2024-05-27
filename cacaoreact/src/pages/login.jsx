@@ -19,6 +19,9 @@ function Login() {
       console.log('Login successful:', response.data);
       // Guarda el token en el almacenamiento local o en el contexto global de la aplicación
       localStorage.setItem('token', response.data.token);
+      localStorage.setItem('name', response.data.nombre)
+      localStorage.setItem('rol', response.data.rol)
+      console.log(localStorage.getItem('rol'))
 
       // Redirige al usuario a la página de inicio
       navigate('/');

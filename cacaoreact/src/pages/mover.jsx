@@ -21,7 +21,12 @@ function Mover() {
 
   const moverPale = () => {
     const eti = parseInt(numeroPale);
-    axios.post('http://localhost:8080/pale/move', { eti: eti, ubi: nuevaUbicacion })
+    const token = localStorage.getItem('token')
+    axios.post('http://localhost:8080/pale/move', { eti: eti, ubi: nuevaUbicacion }, {
+      headers: {
+        Authorization: token // Establece el token en el encabezado de autorización
+      }
+    })
       .then(response => {
         setModalMessage('Pale movido correctamente');
         setShowModal(true);
