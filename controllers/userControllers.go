@@ -4,6 +4,7 @@ import (
 	"cacaodelight/initializers"
 	"cacaodelight/models"
 	"net/http"
+	"time"
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
@@ -50,14 +51,17 @@ func Login(c *gin.Context) {
 		return
 	}
 
+	expirationTime := time.Now().Add(24 * time.Hour)
+
 	claims := models.Claims{
 		UsuarioID: user.ID,
 		Rol:       user.Rol,
 		StandardClaims: jwt.StandardClaims{
-			ExpiresAt: 30000, // Ajusta la expiración según tus necesidades
+			ExpiresAt: expirationTime.Unix(),
 			Issuer:    "cacaodelight",
 		},
 	}
+
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 
 	tokenString, err := token.SignedString([]byte("pabloFarlopa"))
@@ -66,5 +70,12 @@ func Login(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"token": tokenString})
+	// Incluye el prefijo "Bearer " en el token
+	bearerToken := "Bearer " + tokenString
+
+	c.JSON(http.StatusOK, gin.H{
+		"token":  bearerToken,
+		"nombre": user.Nombre,
+		"rol":    user.Rol,
+	})
 }

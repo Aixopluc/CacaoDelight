@@ -56,7 +56,12 @@ function Modificar() {
 
   const recibirDatosPale = async () => {
     try {
-      const respuesta = await axios.get(`http://localhost:8080/pale/getOneEti/${numeroPale}`);
+      const token = localStorage.getItem('token')
+      const respuesta = await axios.get(`http://localhost:8080/pale/getOneEti/${numeroPale}`, {
+        headers: {
+          Authorization: token // Establece el token en el encabezado de autorización
+        }
+      });
       console.log("Console log de la respuesta",respuesta.data.pales);
       setLeido(true);
       setPale(respuesta.data.pales);
@@ -77,7 +82,12 @@ function Modificar() {
         Kg: parseFloat(pale.Kg),
         NumeroDePale: parseInt(pale.NumeroDePale)
       };
-      const respuesta = await axios.post(`http://localhost:8080/pale/upd/${pale.ID}`, datosPale ) 
+      const token = localStorage.getItem('token')
+      const respuesta = await axios.post(`http://localhost:8080/pale/upd/${pale.ID}`, datosPale, {
+        headers: {
+          Authorization: token // Establece el token en el encabezado de autorización
+        }
+      });
 
       setLeido(false)
       setPale({
@@ -118,8 +128,13 @@ function Modificar() {
 
   const deletePale = async () => {
     try{
-      const respuesta = await axios.delete(`http://localhost:8080/delete/${pale.ID}`);
-      if (respuesta.status == 200){
+      const token = localStorage.getItem('token')
+      const respuesta = await axios.delete(`http://localhost:8080/delete/${pale.ID}`, {
+        headers: {
+          Authorization: token // Establece el token en el encabezado de autorización
+        }
+      });
+      if (respuesta.status == 201){
         console.log("Pale eliminado con exito")
       }
     }catch(error){

@@ -7,17 +7,10 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
 )
 
 func PaleCreate(c *gin.Context) {
-	authHeader := c.GetHeader("Authorization")
-	token := extractToken(authHeader)
-	if !validateToken(token) {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "Token de autorización inválido"})
-		return
-	}
 
 	var paleData models.Pale
 	if err := c.BindJSON(&paleData); err != nil {
@@ -41,12 +34,6 @@ func PaleCreate(c *gin.Context) {
 }
 
 func GetAllPales(c *gin.Context) {
-	authHeader := c.GetHeader("Authorization")
-	token := extractToken(authHeader)
-	if !validateToken(token) {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "Token de autorización inválido"})
-		return
-	}
 
 	var pales []models.Pale
 	initializers.DB.Find(&pales, "expedido = false")
@@ -57,12 +44,6 @@ func GetAllPales(c *gin.Context) {
 }
 
 func GetPaleById(c *gin.Context) {
-	authHeader := c.GetHeader("Authorization")
-	token := extractToken(authHeader)
-	if !validateToken(token) {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "Token de autorización inválido"})
-		return
-	}
 
 	id := c.Param("ID")
 	var pales models.Pale
@@ -74,12 +55,6 @@ func GetPaleById(c *gin.Context) {
 }
 
 func GetPaleByEti(c *gin.Context) {
-	authHeader := c.GetHeader("Authorization")
-	token := extractToken(authHeader)
-	if !validateToken(token) {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "Token de autorización inválido"})
-		return
-	}
 
 	NumeroDePale := c.Param("ETI")
 	var pales models.Pale
@@ -93,12 +68,6 @@ func GetPaleByEti(c *gin.Context) {
 }
 
 func PaleUpdate(c *gin.Context) {
-	authHeader := c.GetHeader("Authorization")
-	token := extractToken(authHeader)
-	if !validateToken(token) {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "Token de autorización inválido"})
-		return
-	}
 
 	id := c.Param("ID")
 
@@ -145,12 +114,6 @@ func PaleUpdate(c *gin.Context) {
 }
 
 func PaleToExp(c *gin.Context) {
-	authHeader := c.GetHeader("Authorization")
-	token := extractToken(authHeader)
-	if !validateToken(token) {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "Token de autorización inválido"})
-		return
-	}
 
 	var numsPales []int
 	var pales []models.Pale
@@ -178,12 +141,6 @@ func PaleToExp(c *gin.Context) {
 }
 
 func GetAllPalesExp(c *gin.Context) {
-	authHeader := c.GetHeader("Authorization")
-	token := extractToken(authHeader)
-	if !validateToken(token) {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "Token de autorización inválido"})
-		return
-	}
 
 	var pales []models.Pale
 	initializers.DB.Order("ubicacion ASC").Find(&pales, "estado = ? AND expedido = ?", "Expedir", false)
@@ -194,12 +151,6 @@ func GetAllPalesExp(c *gin.Context) {
 }
 
 func ExpPale(c *gin.Context) {
-	authHeader := c.GetHeader("Authorization")
-	token := extractToken(authHeader)
-	if !validateToken(token) {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "Token de autorización inválido"})
-		return
-	}
 
 	numPale := c.Param("numPale")
 	var pale models.Pale
@@ -216,12 +167,6 @@ func ExpPale(c *gin.Context) {
 }
 
 func DeletePaleById(c *gin.Context) {
-	authHeader := c.GetHeader("Authorization")
-	token := extractToken(authHeader)
-	if !validateToken(token) {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "Token de autorización inválido"})
-		return
-	}
 
 	id := c.Param("ID")
 	var pales models.Pale
@@ -233,12 +178,6 @@ func DeletePaleById(c *gin.Context) {
 }
 
 func MovePale(c *gin.Context) {
-	authHeader := c.GetHeader("Authorization")
-	token := extractToken(authHeader)
-	if !validateToken(token) {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "Token de autorización inválido"})
-		return
-	}
 
 	var requestBody struct {
 		ETI int    `json:"eti"`
@@ -290,28 +229,28 @@ func MovePale(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "Pale movido correctamente"})
 }
 
-func extractToken(authHeader string) string {
-	if authHeader == "" {
-		return ""
-	}
-	parts := strings.Split(authHeader, " ")
-	if len(parts) != 2 || parts[0] != "Bearer" {
-		return ""
-	}
-	return parts[1]
-}
+// func extractToken(authHeader string) string {
+// 	if authHeader == "" {
+// 		return ""
+// 	}
+// 	parts := strings.Split(authHeader, " ")
+// 	if len(parts) != 2 || parts[0] != "Bearer" {
+// 		return ""
+// 	}
+// 	return parts[1]
+// }
 
-func validateToken(tokenString string) bool {
-	if tokenString == "" {
-		return false
-	}
+// func validateToken(tokenString string) bool {
+// 	if tokenString == "" {
+// 		return false
+// 	}
 
-	token, err := jwt.ParseWithClaims(tokenString, &models.Claims{}, func(token *jwt.Token) (interface{}, error) {
-		return []byte("pabloFarlopa"), nil // Asegúrate de que esta clave sea la misma que usaste para firmar el token
-	})
-	if err != nil || !token.Valid {
-		return false
-	}
+// 	token, err := jwt.ParseWithClaims(tokenString, &models.Claims{}, func(token *jwt.Token) (interface{}, error) {
+// 		return []byte("pabloFarlopa"), nil // Asegúrate de que esta clave sea la misma que usaste para firmar el token
+// 	})
+// 	if err != nil || !token.Valid {
+// 		return false
+// 	}
 
-	return true
-}
+// 	return true
+// }

@@ -3,6 +3,7 @@ package main
 import (
 	"cacaodelight/controllers"
 	"cacaodelight/initializers"
+	"cacaodelight/middlewares"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -20,17 +21,26 @@ func main() {
 		AllowMethods: []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
 		AllowHeaders: []string{"Origin", "Content-Type", "Content-Length", "Accept-Encoding", "Authorization"},
 	}))
-	r.POST("/pale/create", controllers.PaleCreate)
-	r.GET("/pales/getAll", controllers.GetAllPales)
-	r.GET("/pale/getOneId/:ID", controllers.GetPaleById)
-	r.GET("/pale/getOneEti/:ETI", controllers.GetPaleByEti)
-	r.POST("/pale/upd/:ID", controllers.PaleUpdate)
-	r.POST("/pales/exp", controllers.PaleToExp)      // Pone el estado del pale a expedir
-	r.GET("/palesexp", controllers.GetAllPalesExp)   // Devuelve todos los pales con estado expedir ordenado por ubicación
-	r.POST("/paleexp/:numPale", controllers.ExpPale) // Pone el booleano expedido a true
-	r.DELETE("/delete/:ID", controllers.DeletePaleById)
-	r.POST("/pale/move", controllers.MovePale)
+
+	// Rutas públicas
 	r.POST("/users/create", controllers.CreateUser)
 	r.POST("/users/login", controllers.Login)
+
+	// Rutas protegidas
+	protected := r.Group("/")
+	protected.Use(middlewares.AuthMiddleware())
+	{
+		protected.POST("/pale/create", controllers.PaleCreate)
+		protected.GET("/pales/getAll", controllers.GetAllPales)
+		protected.GET("/pale/getOneId/:ID", controllers.GetPaleById)
+		protected.GET("/pale/getOneEti/:ETI", controllers.GetPaleByEti)
+		protected.POST("/pale/upd/:ID", controllers.PaleUpdate)
+		protected.POST("/pales/exp", controllers.PaleToExp)
+		protected.GET("/palesexp", controllers.GetAllPalesExp)
+		protected.POST("/paleexp/:numPale", controllers.ExpPale)
+		protected.DELETE("/delete/:ID", controllers.DeletePaleById)
+		protected.POST("/pale/move", controllers.MovePale)
+	}
+
 	r.Run(":8080") // listen and serve on 0.0.0.0:8080
 }

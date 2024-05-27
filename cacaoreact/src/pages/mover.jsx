@@ -20,7 +20,12 @@ function Mover() {
   const moverPale = () => {
     // Convertir el número de pale a entero antes de enviarlo al servidor
     const eti = parseInt(numeroPale);
-    axios.post('http://localhost:8080/pale/move', { eti: eti, ubi: nuevaUbicacion })
+    const token = localStorage.getItem('token')
+    axios.post('http://localhost:8080/pale/move', { eti: eti, ubi: nuevaUbicacion }, {
+      headers: {
+        Authorization: token // Establece el token en el encabezado de autorización
+      }
+    })
       .then(response => {
         // Manejar la respuesta del backend
         // Por ejemplo, si la respuesta indica que el número de pale existe, actualiza el estado correspondiente
