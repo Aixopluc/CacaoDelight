@@ -22,6 +22,7 @@ function GestionarSalida() {
       }, 
       { field: "Producto", filter: true, floatingFilter: true, width: 'auto', flex: 1 },
       { field: "Kg", filter: true, floatingFilter: true, width: 'auto' ,flex: 1},
+      { field: "Cantidad", filter: true, floatingFilter: true, width: 'auto' ,flex: 1},
       { field: "Lote", filter: true, floatingFilter: true, width: 'auto', flex: 1},
       { field: "NumeroDePale", filter: true, floatingFilter: true, width: 'auto', flex: 1 },
       { field: "Estado", filter: true, floatingFilter: true, width: 'auto' , flex: 1},

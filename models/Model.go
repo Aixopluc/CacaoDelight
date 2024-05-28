@@ -11,6 +11,7 @@ type Pale struct {
 	Estado       string  `gorm:"size:50"`
 	Expedido     bool
 	Producto     string `gorm:"size:50"`
+	Cantidad     int
 }
 
 func (Pale) TableName() string { return "pales" }

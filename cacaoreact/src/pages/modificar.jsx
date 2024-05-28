@@ -267,7 +267,7 @@ function Modificar() {
                 <XMarkIcon  className="h-8 w-8 text-cream hover:rotate-90 transition-transform duration-300 hover:cursor-pointer"/>
               </button>
             </div>
-              <p className="text-2xl font-bold mb-4 text-cream">MODIFICAR PRODUCTO</p>
+              <p className="text-2xl font-bold mb-4 text-cream">DIVIDIR PALE</p>
                 <div className="mb-4">
                   <label htmlFor="kg" className="block mb-1 text-cream text-left ml-4">Kg:</label>
                   <input

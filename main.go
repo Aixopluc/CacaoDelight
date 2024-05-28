@@ -22,11 +22,11 @@ func main() {
 		AllowHeaders: []string{"Origin", "Content-Type", "Content-Length", "Accept-Encoding", "Authorization"},
 	}))
 
-	// Rutas públicas
+	// Rutas sin auth
 	r.POST("/users/create", controllers.CreateUser)
 	r.POST("/users/login", controllers.Login)
 
-	// Rutas protegidas
+	// A partir de aquí deberían estar protejidas con el token!
 	protected := r.Group("/")
 	protected.Use(middlewares.AuthMiddleware())
 	{

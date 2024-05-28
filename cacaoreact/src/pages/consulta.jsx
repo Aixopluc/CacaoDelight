@@ -17,6 +17,7 @@ function Consulta() {
     columnDefs: [
       { field: "Producto", filter: true, floatingFilter: true, width: 'auto', flex: 1, resizable: false },
       { field: "Kg", filter: true, floatingFilter: true, width: 'auto' ,flex:1, resizable: false},
+      { field: "Cantidad", filter: true, floatingFilter: true, width: 'auto' ,flex:1, resizable: false},
       { field: "Lote", filter: true, floatingFilter: true, width: 'auto',flex:1, resizable: false},
       { field: "NumeroDePale", filter: true, floatingFilter: true, width: 'auto',flex:1, resizable: false },
       { field: "Estado", filter: true, floatingFilter: true, width: 'auto' ,flex:1, resizable: false},
@@ -98,8 +99,10 @@ function Consulta() {
     try {
       const datosPale = {
         ...paleToEdit,
-        Kg: parseFloat(paleToEdit.Kg),
+        Cantidad: parseInt(paleToEdit.Cantidad),
+        Kg: parseFloat(paleToEdit.Kg)*(paleToEdit.Cantidad),
         NumeroDePale: parseInt(paleToEdit.NumeroDePale)
+        
       };
       const token = localStorage.getItem("token");
       const respuesta = await axios.post(`http://localhost:8080/pale/upd/${paleToEdit.ID}`, datosPale, {
@@ -188,6 +191,19 @@ function Consulta() {
                   onChange={(event) => setPaleToEdit({ ...paleToEdit, Kg: event.target.value })}
                   className="w-11/12 px-3 py-2 border-2 border-cream rounded-md shadow-sm focus:outline-none bg-grisin text-cdverde"/>
               </div>
+
+
+              <div className="mb-4">
+                <label htmlFor="cantidad" className="block mb-1 text-cream text-left ml-4">Cantidad:</label>
+                <input
+                  type="text"
+                  id="cantidad"
+                  name="Cantidad"
+                  value={paleToEdit.Cantidad}
+                  onChange={(event) => setPaleToEdit({ ...paleToEdit, Cantidad: event.target.value })}
+                  className="w-11/12 px-3 py-2 border-2 border-cream rounded-md shadow-sm focus:outline-none bg-grisin text-cdverde"/>
+              </div>
+
 
               <div className="mb-4">
                 <label htmlFor="lote" className="block mb-1 text-cream text-left ml-4">Lote:</label>
