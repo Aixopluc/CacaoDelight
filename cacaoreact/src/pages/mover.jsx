@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Header from '../components/header';
 import axios from 'axios';
+import Footer from '../components/footer';
 
 function Mover() {
   const [numeroPale, setNumeroPale] = useState('');
@@ -14,6 +15,7 @@ function Mover() {
     setNumeroPale(event.target.value);
   };
 
+  
   const handleSubmit = (event) => {
     event.preventDefault();
     moverPale();
@@ -29,11 +31,13 @@ function Mover() {
     })
       .then(response => {
         setModalMessage('Pale movido correctamente');
-        setShowModal(true);
+        
         setModalVisible(true);
       })
       .catch(error => {
         console.error('Error al mover el pale:', error);
+        setModalVisible(true)
+        setModalMessage("El número de pale no existe")
       });
   };
 
@@ -69,21 +73,20 @@ function Mover() {
           <button type="submit" className="bg-cream text-cdverde px-4 py-2 rounded-md">
             Verificar
           </button>
-          
-          {/* MODAL */}
-          
-            <div className={`fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 transition-opacity duration-300 ${modalVisible ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
-              <div className={`p-8 bg-cream rounded-md shadow-md border-hover-but border-2 transform transition-transform duration-300 ${modalVisible ? 'translate-y-0' : '-translate-y-full'}`}>
-                <p className="text-lg font-bold mb-4">{modalMessage}</p>
-                <button
-                  onClick={() => setShowModal(false)}
-                  className="bg-cdverde text-cream px-4 py-2 rounded-md hover:bg-hover-but focus:outline-none focus:bg-blue-600">
-                  Cerrar
-                </button>
-              </div>
-            </div>
         </form>
       </div>
+      {/* MODAL */}
+      <div className={`fixed inset-0 flex items-center justify-center  bg-opacity-50 ${modalVisible ? 'transition-transform duration-300 ease-out transform translate-y-0' : 'transition-transform duration-300 ease-in transform -translate-y-full'}`}>
+              <div className="p-8 bg-cream rounded-md shadow-md  border-hover-but border-2">
+          <p className="text-lg font-bold mb-4">{modalMessage}</p>
+          <button
+            onClick={() => setModalVisible(false)}
+            className="bg-cdverde text-cream px-4 py-2 rounded-md hover:bg-hover-but focus:outline-none">
+            Cerrar
+          </button>
+        </div>
+      </div>
+      <Footer/>
     </div>
   );
 }

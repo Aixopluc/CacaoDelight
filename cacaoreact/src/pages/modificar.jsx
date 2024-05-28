@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom';
 import Header from '../components/header';
 import axios from 'axios';
 import Footer from '../components/footer';
+import {XMarkIcon, MapIcon} from '@heroicons/react/24/solid'
+
 const ConfirmacionModal = ({ mostrar, cerrarModal, confirmarEliminacion }) => {
   return (
     <div className={`fixed inset-0 flex items-center justify-center ${mostrar ? '' : 'hidden'}`}>
@@ -43,6 +45,8 @@ function Modificar() {
   });
   const [mostrarModal, setMostrarModal] = useState(false);
   const [mostralModalNoPale, setMostrarModalNoPale] = useState(false)
+  const [paleNew, setpaleNew] = useState([]);
+  const [showModal, setShowModal] = useState(false);
 
 
   useEffect(() => {
@@ -75,11 +79,16 @@ function Modificar() {
     }
   };
 
+  const closeModal = () => {
+    setShowModal(false);
+  };
+
   const enviarDatosPale = async () => {
     try {
       const datosPale = {
         ...pale,
-        Kg: parseFloat(pale.Kg),
+        Cantidad: parseInt(pale.Cantidad),
+        Kg: parseFloat(pale.Kg)*(pale.Cantidad),
         NumeroDePale: parseInt(pale.NumeroDePale)
       };
       const token = localStorage.getItem('token')
@@ -97,7 +106,8 @@ function Modificar() {
         NumeroDePale: '',
         Estado: '',
         Expedido: false,
-        Ubicaccion: ''
+        Ubicaccion: '',
+        Cantidad: ''
       });
       setNumeroPale('');
     }
@@ -179,6 +189,18 @@ function Modificar() {
             </div>
 
             <div className="mb-4">
+              <label htmlFor="cantidad" className="block mb-1 text-cream text-left ml-4">Cantidad:</label>
+              <input
+                type="text"
+                id="cantidad"
+                name="Cantidad"
+                value={pale.Cantidad}
+                onChange={(event) => setPale({ ...pale, Cantidad: event.target.value })}
+                className="w-11/12 px-3 py-2 border-2 border-cream rounded-md shadow-sm focus:outline-none bg-grisin text-cdverde"
+              />
+            </div>
+
+            <div className="mb-4">
               <label htmlFor="lote" className="block mb-1 text-cream text-left ml-4">Lote:</label>
               <input
                 type="text"
@@ -221,6 +243,9 @@ function Modificar() {
               />
             </div>
             <div className="flex justify-evenly items-center">
+            <button onClick={setShowModal} type="submit" className="bg-cream text-cdverde  px-4 py-2 rounded-md hover:bg-hover-but">
+                Dividir pale
+              </button>
               <button
                 onClick={enviarDatosPale}
                 className="bg-cream text-cdverde px-4 py-2 rounded-md hover:bg-hover-but focus:outline-none focus:bg-blue-600"
@@ -235,6 +260,59 @@ function Modificar() {
               </button>
             </div>
             <Footer />
+            <div className={`fixed inset-0 flex items-center justify-center bg-black bg-opacity-90 ${showModal ? 'transition-transform duration-300 ease-out transform translate-y-0' : 'transition-transform duration-300 ease-in transform -translate-y-full'}`}>
+          <div className="bg-cdverde p-8 rounded-lg shadow-xl max-w-[400px] w-[400px]">
+            <div className='flex justify-end'>
+              <button className='mb-3'  onClick={closeModal}>
+                <XMarkIcon  className="h-8 w-8 text-cream hover:rotate-90 transition-transform duration-300 hover:cursor-pointer"/>
+              </button>
+            </div>
+              <p className="text-2xl font-bold mb-4 text-cream">MODIFICAR PRODUCTO</p>
+                <div className="mb-4">
+                  <label htmlFor="kg" className="block mb-1 text-cream text-left ml-4">Kg:</label>
+                  <input
+                    type="text"
+                    id="kg"
+                    name="Kg"
+                    value={paleNew.Kg}
+                    onChange={(event) => setpaleNew({ ...paleNew, Kg: event.target.value })}
+                    className="w-11/12 px-3 py-2 border-2 border-cream rounded-md shadow-sm focus:outline-none bg-grisin text-cdverde"/>
+                </div>
+              <div className="mb-4">
+                <label htmlFor="cantidad" className="block mb-1 text-cream text-left ml-4">Cantidad:</label>
+                <input
+                  type="text"
+                  id="cantidad"
+                  name="Cantidad"
+                  value={paleNew.Cantidad}
+                  onChange={(event) => setpaleNew({ ...paleNew, Cantidad: event.target.value })}
+                  className="w-11/12 px-3 py-2 border-2 border-cream rounded-md shadow-sm focus:outline-none bg-grisin text-cdverde"/>
+              </div>
+                <div className="mb-4">
+                  <label htmlFor="numeroEtiqueta" className="block mb-1 text-cream text-left ml-4">Número de etiqueta:</label>
+                  <input
+                    type="text"
+                    name="NumeroDePale"
+                    id="numeroEtiqueta"
+                    value={paleNew.NumeroDePale}
+                    onChange={(event) => setpaleNew({ ...paleNew, NumeroDePale: event.target.value })}
+                    className="w-11/12 px-3 py-2 border-2 border-cream rounded-md shadow-sm focus:outline-none bg-grisin text-cdverde"/>
+                </div>
+
+                <div className="flex justify-evenly items-center">
+                <button
+                  onClick={enviarDatosPale}
+                  className="bg-cream text-cdverde px-4 py-2 rounded-md hover:bg-hover-but focus:outline-none">
+                  Modificar
+                </button>
+                <button
+                  onClick={deletePale}
+                  className="bg-[#fc4e4e] text-white px-4 py-2 rounded-md hover:bg-red-600 focus:outline-none focus:bg-red-600">
+                  Eliminar
+                </button>
+              </div>
+            </div>
+          </div>
           </div>
           
 
@@ -259,6 +337,7 @@ function Modificar() {
               <button type="submit" className="bg-cream text-cdverde  px-4 py-2 rounded-md hover:bg-hover-but">
                 Verificar
               </button>
+
             </form>
             <Footer />
             <div className={`fixed inset-0 flex items-center justify-center  bg-opacity-50 ${mostralModalNoPale ? 'transition-transform duration-300 ease-out transform translate-y-0' : 'transition-transform duration-300 ease-in transform -translate-y-full'}`}>

@@ -158,7 +158,7 @@ function Consulta() {
       <div className={`fixed inset-0 flex items-center justify-center bg-black bg-opacity-90 ${showModal ? 'transition-transform duration-300 ease-out transform translate-y-0' : 'transition-transform duration-300 ease-in transform -translate-y-full'}`}>
           <div className="bg-cdverde p-8 rounded-lg shadow-xl max-w-[400px] w-[400px]">
             <div className='flex justify-end'>
-              <button className='mb-3'  onClick={closeModal}>
+              <button className='mb-3'  onClick={closeModal}>º
                 <XMarkIcon  className="h-8 w-8 text-cream hover:rotate-90 transition-transform duration-300 hover:cursor-pointer"/>
               </button>
             </div>
