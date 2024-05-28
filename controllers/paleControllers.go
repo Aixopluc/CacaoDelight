@@ -105,6 +105,10 @@ func PaleUpdate(c *gin.Context) {
 		pale.Producto = paleUpdateData.Producto
 	}
 
+	if paleUpdateData.Cantidad != 0 {
+		pale.Cantidad = paleUpdateData.Cantidad
+	}
+
 	if err := initializers.DB.Save(&pale).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error al guardar en la base de datos"})
 		return
@@ -228,29 +232,3 @@ func MovePale(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{"message": "Pale movido correctamente"})
 }
-
-// func extractToken(authHeader string) string {
-// 	if authHeader == "" {
-// 		return ""
-// 	}
-// 	parts := strings.Split(authHeader, " ")
-// 	if len(parts) != 2 || parts[0] != "Bearer" {
-// 		return ""
-// 	}
-// 	return parts[1]
-// }
-
-// func validateToken(tokenString string) bool {
-// 	if tokenString == "" {
-// 		return false
-// 	}
-
-// 	token, err := jwt.ParseWithClaims(tokenString, &models.Claims{}, func(token *jwt.Token) (interface{}, error) {
-// 		return []byte("pabloFarlopa"), nil // Asegúrate de que esta clave sea la misma que usaste para firmar el token
-// 	})
-// 	if err != nil || !token.Valid {
-// 		return false
-// 	}
-
-// 	return true
-// }

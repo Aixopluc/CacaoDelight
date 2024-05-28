@@ -12,7 +12,8 @@ function Entrada() {
     Ubicacion: 'Antecamara',
     Estado: 'Por ubicar',
     Expedido: false,
-    Producto: 'Producto 1'
+    Producto: 'Producto 1',
+    Cantidad: ''
   });
 
   const [modalVisible, setModalVisible] = useState(false);
@@ -41,7 +42,8 @@ function Entrada() {
     try {
       const datosPale = {
         ...pale,
-        Kg: parseFloat(pale.Kg),
+        Cantidad: parseInt(pale.Cantidad),
+        Kg: parseFloat(pale.Kg)*(pale.Cantidad),
         NumeroDePale: parseInt(pale.NumeroDePale)
       };
       const token = localStorage.getItem('token');
@@ -63,7 +65,8 @@ function Entrada() {
         Ubicacion: 'Antecamara',
         Estado: 'Por ubicar',
         Expedido: false,
-        Producto: 'Producto 1'
+        Producto: 'Producto 1',
+        Cantidad: ''
       });
 
       // Cerrar el modal después de 1 segundo
@@ -103,12 +106,24 @@ function Entrada() {
         </div>
 
         <div className="mb-4">
-          <label htmlFor="kg" className="block mb-1 text-cream text-left ml-4">Kg</label>
+          <label htmlFor="kg" className="block mb-1 text-cream text-left ml-4">Kg por unidad</label>
           <input
             type="text"
             id="kg"
             name="Kg"
             value={pale.Kg}
+            onChange={handleInputChange}
+            className="w-11/12 px-3 py-2 border-2 border-cream rounded-md shadow-sm focus:outline-none bg-grisin text-cdverde"
+            required
+          />
+        </div>
+        <div className="mb-4">
+          <label htmlFor="cantidad" className="block mb-1 text-cream text-left ml-4">Cantidad</label>
+          <input
+            type="text"
+            id="cantidad"
+            name="Cantidad"
+            value={pale.Cantidad}
             onChange={handleInputChange}
             className="w-11/12 px-3 py-2 border-2 border-cream rounded-md shadow-sm focus:outline-none bg-grisin text-cdverde"
             required
