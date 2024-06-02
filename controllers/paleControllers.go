@@ -3,8 +3,10 @@ package controllers
 import (
 	"cacaodelight/initializers"
 	"cacaodelight/models"
+	"encoding/csv"
 	"log"
 	"net/http"
+	"strconv"
 	"strings"
 
 	"github.com/gin-gonic/gin"
@@ -31,6 +33,59 @@ func PaleCreate(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusCreated, gin.H{"pale": paleData})
+}
+
+func UploadPales(c *gin.Context) {
+	file, err := c.FormFile("file")
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Error al obtener el archivo"})
+		return
+	}
+
+	// Abrir el archivo CSV
+	csvFile, err := file.Open()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error al abrir el archivo"})
+		return
+	}
+	defer csvFile.Close()
+
+	// Leer el archivo CSV
+	reader := csv.NewReader(csvFile)
+	reader.Comma = ',' // Por defecto es la coma
+	records, err := reader.ReadAll()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error al leer el archivo CSV"})
+		return
+	}
+
+	// Procesar las filas del CSV
+	var pales []models.Pale
+	for _, record := range records {
+		numeroDePale, _ := strconv.Atoi(record[1])
+		kg, _ := strconv.ParseFloat(record[2], 64)
+		cantidad, _ := strconv.Atoi(record[8])
+
+		pale := models.Pale{
+			NumeroDePale: numeroDePale,
+			Kg:           kg,
+			Lote:         record[3],
+			Ubicacion:    record[4],
+			Estado:       record[5],
+			Expedido:     strings.ToLower(record[6]) == "false",
+			Producto:     record[7],
+			Cantidad:     cantidad,
+		}
+		pales = append(pales, pale)
+	}
+
+	// Insertar los registros en la base de datos
+	if err := initializers.DB.Create(&pales).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error al insertar los registros"})
+		return
+	}
+
+	c.JSON(http.StatusCreated, gin.H{"message": "Pales insertados correctamente"})
 }
 
 func GetAllPales(c *gin.Context) {
