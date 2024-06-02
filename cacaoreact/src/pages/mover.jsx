@@ -6,6 +6,8 @@ import axios from 'axios';
 function Mover() {
   const [numeroPale, setNumeroPale] = useState('');
   const [nuevaUbicacion, setNuevaUbicacion] = useState('');
+  const [modalVisible, setModalVisible] = useState(false);
+  const [modalMessage, setModalMessage] = useState('');
 
   const handleInputChange = (event) => {
     setNumeroPale(event.target.value);
@@ -21,18 +23,22 @@ function Mover() {
     // Convertir el número de pale a entero antes de enviarlo al servidor
     const eti = parseInt(numeroPale);
     const token = localStorage.getItem('token')
-    axios.post('http://localhost:8080/pale/move', { eti: eti, ubi: nuevaUbicacion }, {
+    const respons = axios.post('http://localhost:8080/pale/move', { eti: eti, ubi: nuevaUbicacion }, {
       headers: {
         Authorization: token // Establece el token en el encabezado de autorización
       }
     })
       .then(response => {
-        // Manejar la respuesta del backend
-        // Por ejemplo, si la respuesta indica que el número de pale existe, actualiza el estado correspondiente
-        // Por ejemplo, setNumeroExiste(true)
+        setModalVisible(true)
+        setModalMessage(response.data.message);
+        setNuevaUbicacion('')
+        setNumeroPale('')
       })
       .catch(error => {
-        // Manejar cualquier error que pueda ocurrir durante la llamada
+        setModalVisible(true)
+        setModalMessage("El numero de pale no existe");
+        setNuevaUbicacion('')
+        setNumeroPale('')
         console.error('Error al mover el pale:', error);
       });
   };
@@ -70,6 +76,18 @@ function Mover() {
             Verificar
           </button>
         </form>
+      </div>
+
+        {/* MODAL */}
+        <div className={`fixed inset-0 flex items-center justify-center  bg-opacity-50 ${modalVisible ? 'transition-transform duration-300 ease-out transform translate-y-0' : 'transition-transform duration-300 ease-in transform -translate-y-full'}`}>
+              <div className="p-8 bg-cream rounded-md shadow-md  border-hover-but border-2">
+          <p className="text-lg font-bold mb-4">{modalMessage}</p>
+          <button
+            onClick={() => setModalVisible(false)}
+            className="bg-cdverde text-cream px-4 py-2 rounded-md hover:bg-hover-but focus:outline-none">
+            Cerrar
+          </button>
+        </div>
       </div>
     </div>
   );

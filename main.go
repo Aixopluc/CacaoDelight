@@ -40,6 +40,7 @@ func main() {
 		protected.POST("/paleexp/:numPale", controllers.ExpPale)
 		protected.DELETE("/delete/:ID", controllers.DeletePaleById)
 		protected.POST("/pale/move", controllers.MovePale)
+		protected.POST("/pales/upload", controllers.UploadPales)
 	}
 
 	r.Run(":8080") // listen and serve on 0.0.0.0:8080
