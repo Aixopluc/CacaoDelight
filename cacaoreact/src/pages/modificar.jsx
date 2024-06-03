@@ -46,14 +46,15 @@ function Modificar() {
   });
   const [mostrarModal, setMostrarModal] = useState(false);
   const [mostralModalNoPale, setMostrarModalNoPale] = useState(false);
+  let kgTotales = 0;
   
   const calculateKg = (cantidad) => {
-    return cantidad ? cantidad * (pale.Kg / pale.Cantidad) : 0;
+    return  cantidad * (pale.Kg / pale.Cantidad) ;
   };
 
   const [paleNew, setPaleNew] = useState({
     Producto: pale.Producto,
-    Kg: calculateKg(''),
+    Kg: '',
     Cantidad: '',
     Lote: pale.Lote,
     NumeroDePale: '',
@@ -86,9 +87,25 @@ function Modificar() {
           Authorization: token
         }
       });
-      console.log("Console log de la respuesta", respuesta.data.pales);
+      console.log("Console log de la respuesta", respuesta.datas);
+  
+      const paleData = respuesta.data.pales;
+      // Calcular los kilogramos divididos por la cantidad
+      console.log(paleData.Kg)
+      kgTotales = paleData.Kg
+      const kgPorUnidad = paleData.Kg / paleData.Cantidad;
+      
+      // Actualizar el objeto pale con el nuevo valor de kilogramos
+      const updatedPaleData = {
+        ...paleData,
+        Kg: kgPorUnidad  // Puedes agregar una nueva propiedad o reemplazar la existente
+      };
+  
       setLeido(true);
-      setPale(respuesta.data.pales);
+      setPale(updatedPaleData);
+      console.log("UpadtedPale",updatedPaleData.Kg)
+      console.log("paleSlo",pale.Kg)
+      
       if (respuesta.data.pales.ID == 0) {
         setMostrarModalNoPale(true);
       }
@@ -96,9 +113,11 @@ function Modificar() {
       console.error('Error al enviar los datos:', error);
     }
   };
+  
 
   const closeModal = () => {
     setShowModal(false);
+    console.log(paleNew)
   };
 
   const enviarDatosPale = async () => {
@@ -139,7 +158,7 @@ function Modificar() {
       const datosPale = {
         ...paleNew,
         Cantidad: parseInt(paleNew.Cantidad),
-        Kg: parseFloat(paleNew.Kg),
+        Kg:  parseFloat(pale.Kg) * paleNew.Cantidad,
         NumeroDePale: parseInt(paleNew.NumeroDePale)
       };
       const token = localStorage.getItem('token');
@@ -149,11 +168,12 @@ function Modificar() {
         }
       });
       if (respuesta.status == 201){
-        const pesoCaja = pale.Cantidad / pale.Kg
+        const pesoCaja = kgTotales / pale.Cantidad
+        const unidadesRestantes = pale.Cantidad - paleNew.Cantidad
         const paleUpd = {
           ...pale,
           Cantidad: parseInt(pale.Cantidad - paleNew.Cantidad),
-          Kg: parseFloat(pesoCaja * paleUpd.Cantidad),
+          Kg: parseInt(unidadesRestantes * pale.Kg),
           NumeroDePale: parseInt(pale.NumeroDePale)
         };
         console.log(paleUpd.cantidad)

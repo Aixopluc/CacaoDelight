@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import React, { useState } from 'react';
 import axios from 'axios';
 import Footer from '../components/footer';
+import UploadPaleCSV from '../components/UploadPaleCSV';
 
 function Entrada() {
   const [pale, setPale] = useState({
@@ -18,6 +19,38 @@ function Entrada() {
 
   const [modalVisible, setModalVisible] = useState(false);
   const [modalMessage, setModalMessage] = useState('');
+  const [modalCsvVisible, setModaCsvlVisible] = useState(false);
+
+  const [file, setFile] = useState(null);
+  const [message, setMessage] = useState('');
+
+  const handleFileChange = (event) => {
+    setFile(event.target.files[0]);
+  };
+
+  const handleUpload = async () => {
+    if (!file) {
+      setMessage('Por favor seleccione un archivo');
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('file', file);
+
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.post('http://localhost:8080/pales/upload', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          'Authorization': token
+        }
+      });
+      setMessage(response.data.message);
+    } catch (error) {
+      setMessage('Error al subir el archivo');
+      console.error('Error al subir el archivo:', error);
+    }
+  };
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
@@ -156,9 +189,18 @@ function Entrada() {
         <div className="justify-between items-center">
           <button
             onClick={enviarDatosPale}
-            className="text-cdverde px-4 py-3 rounded-lg mt-10 focus:outline-none bg-cream w-11/12 font-bold hover:bg-hover-but"
+            className="text-cdverde px-4 py-3 rounded-lg mt-6 focus:outline-none bg-cream w-11/12 font-bold hover:bg-hover-but"
           >
             Añadir
+          </button>
+        </div>
+
+        <div className="justify-between items-center">
+          <button
+            onClick={() => setModaCsvlVisible(true)}
+            className="text-cdverde px-4 py-3 rounded-lg mt-5 focus:outline-none bg-cream w-11/12 font-bold hover:bg-hover-but"
+          >
+            Añadir CSV
           </button>
         </div>
       </div>
@@ -172,6 +214,25 @@ function Entrada() {
             className="bg-cdverde text-cream px-4 py-2 rounded-md hover:bg-hover-but focus:outline-none">
             Cerrar
           </button>
+        </div>
+      </div>
+
+      <div className={`fixed inset-0 flex items-center justify-center  bg-opacity-50 ${modalCsvVisible ? 'transition-transform duration-300 ease-out transform translate-y-0' : 'transition-transform duration-300 ease-in transform -translate-y-full'}`}>
+        <div className="p-8 bg-cream rounded-md shadow-md  border-hover-but border-2">
+          <h1>Subir archivo CSV</h1>
+          <div className='mt-3'>
+            <div className='flex justify-center'>
+              <input type="file" accept=".csv" onChange={handleFileChange} />
+            </div>
+            
+            {message && <p className='mt-2'>{message}</p>}
+            <div className='my-3 flex justify-around'>
+              <button className='bg-cdverde text-cream px-4 py-2 rounded-md hover:bg-hover-but focus:outline-none' onClick={handleUpload}>Subir</button>
+              <button onClick={() => setModaCsvlVisible(false)} className="bg-cdverde text-cream px-4 py-2 rounded-md hover:bg-hover-but focus:outline-none">
+                Cerrar
+              </button>
+            </div>
+          </div>
         </div>
       </div>
 

@@ -7,9 +7,8 @@ import Footer from '../components/footer';
 function Mover() {
   const [numeroPale, setNumeroPale] = useState('');
   const [nuevaUbicacion, setNuevaUbicacion] = useState('');
-  const [showModal, setShowModal] = useState(false);
-  const [modalMessage, setModalMessage] = useState('');
   const [modalVisible, setModalVisible] = useState(false);
+  const [modalMessage, setModalMessage] = useState('');
 
   const handleInputChange = (event) => {
     setNumeroPale(event.target.value);
@@ -24,17 +23,22 @@ function Mover() {
   const moverPale = () => {
     const eti = parseInt(numeroPale);
     const token = localStorage.getItem('token')
-    axios.post('http://localhost:8080/pale/move', { eti: eti, ubi: nuevaUbicacion }, {
+    const respons = axios.post('http://localhost:8080/pale/move', { eti: eti, ubi: nuevaUbicacion }, {
       headers: {
         Authorization: token // Establece el token en el encabezado de autorización
       }
     })
       .then(response => {
-        setModalMessage('Pale movido correctamente');
-        
-        setModalVisible(true);
+        setModalVisible(true)
+        setModalMessage(response.data.message);
+        setNuevaUbicacion('')
+        setNumeroPale('')
       })
       .catch(error => {
+        setModalVisible(true)
+        setModalMessage("El numero de pale no existe");
+        setNuevaUbicacion('')
+        setNumeroPale('')
         console.error('Error al mover el pale:', error);
         setModalVisible(true)
         setModalMessage("El número de pale no existe")
@@ -75,8 +79,9 @@ function Mover() {
           </button>
         </form>
       </div>
-      {/* MODAL */}
-      <div className={`fixed inset-0 flex items-center justify-center  bg-opacity-50 ${modalVisible ? 'transition-transform duration-300 ease-out transform translate-y-0' : 'transition-transform duration-300 ease-in transform -translate-y-full'}`}>
+
+        {/* MODAL */}
+        <div className={`fixed inset-0 flex items-center justify-center  bg-opacity-50 ${modalVisible ? 'transition-transform duration-300 ease-out transform translate-y-0' : 'transition-transform duration-300 ease-in transform -translate-y-full'}`}>
               <div className="p-8 bg-cream rounded-md shadow-md  border-hover-but border-2">
           <p className="text-lg font-bold mb-4">{modalMessage}</p>
           <button
@@ -86,7 +91,6 @@ function Mover() {
           </button>
         </div>
       </div>
-      <Footer/>
     </div>
   );
 }
